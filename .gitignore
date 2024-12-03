@@ -17,6 +17,10 @@ dist-ssr
 coverage
 *.local
 
+# Ignore generated JavaScript files by TypeScript
+src/*.js
+src/*.js.map
+
 /cypress/videos/
 /cypress/screenshots/
 
