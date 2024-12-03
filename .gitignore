@@ -18,8 +18,8 @@ coverage
 *.local
 
 # Ignore generated JavaScript files by TypeScript
-*.js
-*.js.map
+src/*.js
+src/*.js.map
 
 /cypress/videos/
 /cypress/screenshots/
