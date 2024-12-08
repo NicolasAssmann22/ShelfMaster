@@ -1,5 +1,6 @@
 import { reactive } from 'vue';
 import type { Storage, Item } from '../types/models';
+import { ItemStatus } from '../types/models'
 
 const state = reactive({
   storageUnits: [] as Storage[],
@@ -94,16 +95,16 @@ const useHomeLayout = () => {
           id: '1',
           name: 'Kitchen',
           items: [
-            { id: '1', name: 'Knife', category: 'Cutlery', quantity: 2 },
-            { id: '2', name: 'Fork', category: 'Cutlery', quantity: 4 },
+            { id: '1', name: 'Knife', category: 'Cutlery', quantity: 2, status: ItemStatus.Available },
+            { id: '2', name: 'Fork', category: 'Cutlery', quantity: 4, status: ItemStatus.Lent},
           ],
           children: [
             {
               id: '2',
               name: 'Cupboard',
               items: [
-                { id: '3', name: 'Plate', category: 'Dinnerware', quantity: 6 },
-                { id: '4', name: 'Bowl', category: 'Dinnerware', quantity: 3 },
+                { id: '3', name: 'Plate', category: 'Dinnerware', quantity: 6, status: ItemStatus.Available },
+                { id: '4', name: 'Bowl', category: 'Dinnerware', quantity: 3, status: ItemStatus.Available },
               ],
               children: [],
             },
@@ -111,8 +112,8 @@ const useHomeLayout = () => {
               id: '3',
               name: 'Drawer',
               items: [
-                { id: '5', name:'Spoon', category: 'Cutlery', quantity: 3 },
-                { id: '6', name: 'Teaspoon', category: 'Cutlery', quantity: 5 },
+                { id: '5', name:'Spoon', category: 'Cutlery', quantity: 3, status: ItemStatus.Available },
+                { id: '6', name: 'Teaspoon', category: 'Cutlery', quantity: 5, status: ItemStatus.Lent },
               ],
               children: [],
             },
@@ -122,16 +123,16 @@ const useHomeLayout = () => {
           id: '4',
           name: 'Bathroom',
           items: [
-            { id: '7', name: 'Toothbrush', category: 'Toiletries', quantity: 2 },
-            { id: '8', name: 'Toothpaste', category: 'Toiletries', quantity: 1 },
+            { id: '7', name: 'Toothbrush', category: 'Toiletries', quantity: 2, status: ItemStatus.Available },
+            { id: '8', name: 'Toothpaste', category: 'Toiletries', quantity: 1, status: ItemStatus.Available },
           ],
           children: [
             {
               id: '5',
               name: 'Cabinet',
               items: [
-                { id: '9', name: 'Towel', category: 'Linen', quantity: 4 },
-                { id: '10', name: 'Soap', category: 'Toiletries', quantity: 2 },
+                { id: '9', name: 'Towel', category: 'Linen', quantity: 4, status: ItemStatus.Available },
+                { id: '10', name: 'Soap', category: 'Toiletries', quantity: 2, status: ItemStatus.Lent },
               ],
               children: [],
             },
