@@ -20,10 +20,3 @@ export interface Storage {
   items: Item[];
   children: Storage[];
 }
-
-export interface StorageNode {
-  id: string;
-  label: string;
-  children: StorageNode[];
-  items?: Item[];
-}
