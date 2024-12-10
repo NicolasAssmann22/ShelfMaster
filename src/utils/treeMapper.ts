@@ -1,26 +1,29 @@
 import type { Item, Storage } from '../types/models'
 import type { TreeNodeData } from '../types/tree'
+import { reactive } from 'vue'
 
 /**
  * Maps a Storage to TreeNodeData.
  * @param storage
  */
 export const mapStorageToTreeNode = (storage: Storage): TreeNodeData => {
-  return {
+  return reactive({
     id: storage.id,
     label: storage.name,
+    expanded: false, // This is reactive now
     children: [
       ...storage.items.map(
-        (item: Item): TreeNodeData => ({
-          id: item.id,
-          label: `${item.name} (${item.quantity})`,
-          expanded: false,
-        }),
+        (item: Item): TreeNodeData =>
+          reactive({
+            id: item.id,
+            label: `${item.name} (${item.quantity})`,
+            expanded: false, // This is also reactive
+            children: [],
+          }),
       ),
-      ...storage.children.map(mapStorageToTreeNode),
+      ...storage.children.map(mapStorageToTreeNode), // Recursively process child storages
     ],
-    expanded: false,
-  }
+  })
 }
 
 /**

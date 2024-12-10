@@ -13,15 +13,16 @@ const emit = defineEmits<{
   (e: "toggle", node: TreeNodeData): void;
 }>();
 
-const toggleNode = () => {
-  emit("toggle", props.node);
+const handleClick = (event: MouseEvent) => {
+  event.stopPropagation();
+  emit('toggle', props.node);
 }
 </script>
 
 <template>
  <li>
    <div
-     @click="toggleNode"
+     @click="handleClick"
      class="flex items-center space-x-2 cursor-pointer p-2 hover:bg-gray-100 rounded"
    >
      <span v-if="node.children?.length" class="text-gray-500">
@@ -35,7 +36,7 @@ const toggleNode = () => {
         v-for="child in node.children"
         :key="child.id"
         :node="child"
-        @toggle="toggleNode"
+        @toggle="$emit('toggle', $event)"
       />
    </ul>
   </li>

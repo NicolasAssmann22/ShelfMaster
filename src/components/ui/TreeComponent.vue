@@ -11,6 +11,7 @@ const props = defineProps({
 });
 
 const toggleNode = (node: TreeNodeData) => {
+  console.log('Toggling node', node); // Debugging line
   node.expanded = !node.expanded; // Toggle the expanded state of the node
 };
 </script>
