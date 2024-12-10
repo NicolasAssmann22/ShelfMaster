@@ -1,0 +1,114 @@
+{
+  "storage": [
+    {
+      "name": "Kitchen",
+      "items": [
+        { "name": "Knife", "category": "Cutlery", "quantity": 2, "status": "Available" },
+        { "name": "Fork", "category": "Cutlery", "quantity": 4, "status": "Lent" }
+      ],
+      "children": [
+        {
+          "name": "Cupboard",
+          "items": [
+            { "name": "Plate", "category": "Dinnerware", "quantity": 6, "status": "Available" },
+            { "name": "Bowl", "category": "Dinnerware", "quantity": 3, "status": "Available" }
+          ],
+          "children": []
+        },
+        {
+          "name": "Drawer",
+          "items": [
+            { "name": "Spoon", "category": "Cutlery", "quantity": 3, "status": "Available" },
+            { "name": "Teaspoon", "category": "Cutlery", "quantity": 5, "status": "Lent" }
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Bathroom",
+      "items": [
+        { "name": "Toothbrush", "category": "Toiletries", "quantity": 2, "status": "Available" },
+        { "name": "Toothpaste", "category": "Toiletries", "quantity": 1, "status": "Available" }
+      ],
+      "children": [
+        {
+          "name": "Cabinet",
+          "items": [
+            { "name": "Towel", "category": "Linen", "quantity": 4, "status": "Available" },
+            { "name": "Soap", "category": "Toiletries", "quantity": 2, "status": "Lent" }
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Deep Nested Storage",
+      "items": [],
+      "children": [
+        {
+          "name": "Level 1",
+          "items": [],
+          "children": [
+            {
+              "name": "Level 2",
+              "items": [],
+              "children": [
+                {
+                  "name": "Level 3",
+                  "items": [],
+                  "children": [
+                    {
+                      "name": "Level 4",
+                      "items": [],
+                      "children": [
+                        {
+                          "name": "Level 5",
+                          "items": [],
+                          "children": [
+                            {
+                              "name": "Level 6",
+                              "items": [],
+                              "children": [
+                                {
+                                  "name": "Level 7",
+                                  "items": [],
+                                  "children": [
+                                    {
+                                      "name": "Level 8",
+                                      "items": [],
+                                      "children": [
+                                        {
+                                          "name": "Level 9",
+                                          "items": [],
+                                          "children": [
+                                            {
+                                              "name": "Level 10",
+                                              "items": [
+                                                { "name": "Item 1", "category": "Category 1", "quantity": 1, "status": "Available" },
+                                                { "name": "Item 2", "category": "Category 2", "quantity": 2, "status": "Lent" }
+                                              ],
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

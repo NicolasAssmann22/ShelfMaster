@@ -3,4 +3,5 @@ export interface TreeNodeData {
   label: string;
   children?: TreeNodeData[];
   expanded: boolean;
+  icon: string;
 }

@@ -2,11 +2,11 @@
 import { computed } from 'vue';
 import Tree from '../ui/TreeComponent.vue';
 import { mapStoragesToTreeNodes } from '../../utils/treeMapper';
-import useHomeLayout from '../../composables/useStorage';
+import useStorage from '../../composables/useStorage';
 
-const { state } = useHomeLayout();
+const { state } = useStorage();
 
-const treeData = computed(() => mapStoragesToTreeNodes(state.storageUnits));
+const treeData = computed(() => mapStoragesToTreeNodes(state.storage));
 </script>
 
 <template>

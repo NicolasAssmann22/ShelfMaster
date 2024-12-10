@@ -17,14 +17,14 @@ const toggleNode = (node: TreeNodeData) => {
 </script>
 
 <template>
-  <ul class="list-none p-0 space-y-2">
-    <TreeNode
-      v-for="node in props.nodes"
-      :key="node.id"
-      :node="node"
-      @toggle="toggleNode"
-    />
-  </ul>
+    <ul class="list-none p-0 space-y-2">
+      <TreeNode
+        v-for="node in props.nodes"
+        :key="node.id"
+        :node="node"
+        @toggle="toggleNode"
+      />
+    </ul>
 </template>
 
 <style scoped>
