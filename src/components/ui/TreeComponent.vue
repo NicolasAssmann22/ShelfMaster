@@ -11,9 +11,18 @@ const props = defineProps({
 });
 
 const toggleNode = (node: TreeNodeData) => {
-  console.log('Toggling node', node); // Debugging line
   node.expanded = !node.expanded; // Toggle the expanded state of the node
+  collapseAllChildren(node)
 };
+
+const collapseAllChildren = (node: TreeNodeData) => {
+  if (node.expanded! && node.children) {
+    node.children.forEach((child) => {
+      child.expanded = false; // Collapse all child nodes
+      collapseAllChildren(child); // Recursively collapse deeper levels
+    });
+  }
+}
 </script>
 
 <template>

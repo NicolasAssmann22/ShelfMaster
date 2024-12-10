@@ -84,8 +84,7 @@ const leave = (el: Element): void => {
 .expand-fade-y-leave-active {
   transition:
     transform 0.3s ease,
-    opacity 0.3s ease,
-    margin-top 0.3s ease;
+    opacity 0.3s ease
 }
 
 .expand-fade-y-enter,
