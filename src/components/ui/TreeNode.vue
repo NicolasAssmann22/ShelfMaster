@@ -53,7 +53,7 @@ const leave = (el: Element): void => {
   <li>
     <div
       @click="handleClick"
-      class="flex items-center space-x-2 cursor-pointer p-2 hover:bg-gray-100 rounded"
+      :class="['flex items-center space-x-2 cursor-pointer p-2 hover:bg-gray-100 rounded', { highlighted: node.highlighted }]"
     >
       <span v-if="node.icon" class="text-gray-500">
         <!-- Dynamically render the icon -->
@@ -97,5 +97,9 @@ const leave = (el: Element): void => {
 .expand-fade-y-leave {
   transform: scaleY(1); /* Full height when expanded */
   opacity: 1; /* Fully visible */
+}
+
+.highlighted {
+  background-color: yellow;
 }
 </style>

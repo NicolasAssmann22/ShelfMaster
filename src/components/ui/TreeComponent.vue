@@ -15,6 +15,10 @@ const toggleNode = (node: TreeNodeData) => {
   collapseAllChildren(node)
 };
 
+const highlightNode = (node: TreeNodeData) => {
+  node.highlighted = true; // Highlight the node
+}
+
 const collapseAllChildren = (node: TreeNodeData) => {
   if (node.expanded! && node.children) {
     node.children.forEach((child) => {
@@ -22,6 +26,13 @@ const collapseAllChildren = (node: TreeNodeData) => {
       collapseAllChildren(child); // Recursively collapse deeper levels
     });
   }
+}
+
+const collapseAllNodes = () => {
+  props.nodes.forEach((node) => {
+    node.expanded = false; // Collapse all nodes
+    collapseAllChildren(node); // Recursively collapse deeper levels
+  });
 }
 </script>
 

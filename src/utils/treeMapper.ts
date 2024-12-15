@@ -12,6 +12,7 @@ export const mapStorageToTreeNode = (storage: Storage): TreeNodeData => {
     id: storage.id,
     label: storage.name,
     expanded: false,
+    highlighted: false,
     icon: storage.icon ?? getDefaultIcon(storage),
     children: [
       ...storage.items.map(
@@ -20,6 +21,7 @@ export const mapStorageToTreeNode = (storage: Storage): TreeNodeData => {
             id: item.id,
             label: `${item.name} (${item.quantity})`,
             expanded: false, // This is also reactive
+            highlighted: false,
             children: [],
             icon: item.icon ?? getDefaultIcon(item),
           }),
