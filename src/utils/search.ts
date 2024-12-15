@@ -1,6 +1,6 @@
 import type { Node, Storage, Item } from '../types/models';
 
-interface SearchResult {
+export interface SearchResult {
   node: Node;
   path: Node[];
 }
@@ -40,7 +40,7 @@ const searchRecursively = (nodes: Node[], matchCallback: (node: Node) => boolean
  * @returns An array of matching nodes.
  */
 export const searchNodesByName = (searchText: string, storages: Storage[]): SearchResult[] => {
-  return searchRecursively(storages, (node) => node.name.includes(searchText));
+  return searchRecursively(storages, (node) => searchText.length > 0 && node.name.includes(searchText));
 };
 
 /**

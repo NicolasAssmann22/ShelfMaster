@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, type PropType } from 'vue'
+import { defineProps, defineExpose, type PropType } from 'vue'
 import type { TreeNodeData } from '../../types/tree.ts';
 import TreeNode from './TreeNode.vue';
 
@@ -10,6 +10,11 @@ const props = defineProps({
   },
 });
 
+const expandNode = (node: TreeNodeData) => {
+  node.expanded = true; // Expand the node
+  collapseAllChildren(node); // Collapse all children
+};
+
 const toggleNode = (node: TreeNodeData) => {
   node.expanded = !node.expanded; // Toggle the expanded state of the node
   collapseAllChildren(node)
@@ -17,6 +22,12 @@ const toggleNode = (node: TreeNodeData) => {
 
 const highlightNode = (node: TreeNodeData) => {
   node.highlighted = true; // Highlight the node
+}
+
+const resetHighlighting = () => {
+  props.nodes.forEach((node) => {
+    node.highlighted = false; // Reset highlighting
+  });
 }
 
 const collapseAllChildren = (node: TreeNodeData) => {
@@ -34,6 +45,14 @@ const collapseAllNodes = () => {
     collapseAllChildren(node); // Recursively collapse deeper levels
   });
 }
+
+defineExpose({
+  expandNode,
+  highlightNode,
+  resetHighlighting,
+  collapseAllNodes
+});
+
 </script>
 
 <template>

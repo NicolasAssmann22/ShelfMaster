@@ -2,10 +2,11 @@
 import { computed, ref, watch } from 'vue'
 import Tree from '../ui/TreeComponent.vue';
 import type { Node, Storage, Item } from '../../types/models';
-import { mapStoragesToTreeNodes } from '../../utils/treeMapper';
+import { mapStoragesToTreeNodes, findTreeNodeById } from '../../utils/treeMapper';
 import useStorage from '../../composables/useStorage';
 import { type SearchResult, searchNodesByName } from '../../utils/search';
 import type { TreeNodeData } from '../../types/tree'
+import type TreeComponent from '../ui/TreeComponent.vue';
 
 /**
  * This component handles domain-specific logic such as mapping from the model to the tree component and filtering the tree based on search results.
@@ -17,6 +18,7 @@ const props = defineProps<{
 }>();
 
 const treeData = computed(() => mapStoragesToTreeNodes(state.storage));
+const treeRef = ref<InstanceType<typeof TreeComponent> | null>(null);
 
 const expandNodesAlongPath = (path: Node[]) => {
   // recursive wrapper function
@@ -27,7 +29,7 @@ const expandNodesAlongPath = (path: Node[]) => {
 
     nodes.forEach((node) => {
       if (node.id === currentNode.id) {
-        node.expanded = true;
+        treeRef.value!.expandNode(node);
         if (remainingPath.length > 0 && node.children) {
           expandPathRecursively(node.children, remainingPath);
         }
@@ -46,11 +48,20 @@ watch(() => props.searchText, (newText) => {
     return;
   }
 
+  console.log(state.storage);
   console.log(results);
+
+  treeRef.value!.collapseAllNodes();
+  treeRef.value!.resetHighlighting();
 
   results.forEach((result) => {
     expandNodesAlongPath(result.path);
-    map
+    result.path.forEach((node) => {
+      const treeNode = findTreeNodeById(node.id);
+      if (treeNode) {
+        treeRef.value!.highlightNode(treeNode);
+      }
+    });
   });
 
 });
@@ -58,7 +69,7 @@ watch(() => props.searchText, (newText) => {
 </script>
 
 <template>
-  <Tree :nodes="treeData" />
+  <Tree :nodes="treeData" ref="treeRef" />
 </template>
 
 <style scoped>
