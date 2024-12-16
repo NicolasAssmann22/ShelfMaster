@@ -11,10 +11,15 @@ const useStorage = () => {
 
   // Load the storage data from the JSON file (for example purposes)
   const loadStorageData = () => {
+    const processStorage = (storage: Partial<Storage> & Pick<Storage, 'name'>): Storage => {
+      const items = storage.items?.map((item) => createItem(item as Partial<Item> & Pick<Item, 'name'>)) ?? [];
+      const children = storage.children?.map((child) => processStorage(child as Partial<Storage> & Pick<Storage, 'name'>)) ?? [];
+      return createStorage({ ...storage, items, children });
+    };
+
     state.storage = storageData.storage.map((storage) => {
-      const items = storage.items.map((item: unknown) => createItem(item as Omit<Item, 'name'>));
-      const children = storage.children.map((child: unknown) => createStorage(child as Omit<Storage, 'name'>));
-      return createStorage({ ...storage, items, children } as Omit<Storage, 'name'> & Partial<Storage>);
+      // TODO dirty cast -> should be replaced later by conversion logic from JSON to Storage when this stays in the project
+      return processStorage(storage as unknown as Partial<Storage> & Pick<Storage, 'name'>);
     });
   };
 

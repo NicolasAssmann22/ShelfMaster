@@ -26,15 +26,15 @@ export interface Storage extends Node {
   children: Storage[];
 }
 
-export function createItem(data: Omit<Item, 'name'> & Partial<Item>): Item {
+export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
   if (!data.name) {
     throw new Error('Item name is required');
   }
 
   return {
     id: data.id ?? generateId(data.name),
-    name: data.name,
-    category: data.category?.toLowerCase().trim(),
+    name: data.name, // mandatory
+    category: data.category?.toLowerCase().trim() ?? undefined,
     quantity: data.quantity ?? 1,
     status: data.status ?? ItemStatus.Available,
     icon: data.icon ?? ITEM_DEFAULT_ICON,
@@ -45,7 +45,7 @@ function generateId(name: string): string {
   return CryptoJS.SHA256(name).toString(CryptoJS.enc.Hex);
 }
 
-export function createStorage(data: Omit<Storage, 'name'> & Partial<Storage>): Storage {
+export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): Storage {
   if (!data.name) {
     throw new Error('Storage name is required');
   }
