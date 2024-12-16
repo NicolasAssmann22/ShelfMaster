@@ -42,7 +42,8 @@ export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
 }
 
 function generateId(name: string): string {
-  return CryptoJS.SHA256(name).toString(CryptoJS.enc.Hex);
+  const timestamp = Date.now().toString();
+  return CryptoJS.SHA256(name + timestamp).toString(CryptoJS.enc.Hex).toString(0, 8);
 }
 
 export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): Storage {
