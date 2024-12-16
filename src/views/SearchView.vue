@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import SearchBar from '../components/search/SearchBar.vue';
 import ItemTree from '../components/search/ItemTree.vue';
-import useHomeLayout from '../composables/useStorage';
+import useStorage from '../composables/useStorage';
+import { ref } from 'vue'
 
-const { addExampleData } = useHomeLayout();
+const searchText = ref('')
+
+const handleSearch = (text: string) => {
+  searchText.value = text
+}
+
 </script>
 
 <template>
   <div class="search-view">
-    <SearchBar />
-    <button @click="addExampleData" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-      Beispiel-Daten hinzufügen
-    </button>
+    <SearchBar @search="handleSearch"/>
+    <ItemTree :searchText="searchText"/>
   </div>
-  <ItemTree />
 </template>
 
 <style scoped></style>

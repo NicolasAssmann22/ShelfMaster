@@ -1,11 +1,19 @@
-export interface Item {
+import CryptoJS from 'crypto-js';
+
+const STORAGE_DEFAULT_ICON = 'FolderIcon';
+const ITEM_DEFAULT_ICON = 'WrenchIcon';
+
+export interface Node {
   id: string;
-  parentId?: string | undefined;
   name: string;
-  category: string;
+  icon: string;
+}
+
+export interface Item extends Node {
+  parentId?: string | undefined;
+  category?: string;
   quantity: number;
   status: ItemStatus;
-  icon?: string | undefined;
 }
 
 export enum ItemStatus {
@@ -13,17 +21,50 @@ export enum ItemStatus {
   Lent = 'Lent',
 }
 
-export interface Storage {
-  id: string;
-  name: string;
-  icon?: string | undefined;
+export interface Storage extends Node {
   items: Item[];
   children: Storage[];
 }
 
-export interface StorageNode {
-  id: string;
-  label: string;
-  children: StorageNode[];
-  items?: Item[];
+export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
+  if (!data.name) {
+    throw new Error('Item name is required');
+  }
+
+  return {
+    id: data.id ?? generateId(data.name),
+    name: data.name, // mandatory
+    category: data.category?.toLowerCase().trim() ?? undefined,
+    quantity: data.quantity ?? 1,
+    status: data.status ?? ItemStatus.Available,
+    icon: data.icon ?? ITEM_DEFAULT_ICON,
+  };
+}
+
+function generateId(name: string): string {
+  const timestamp = Date.now().toString();
+  return CryptoJS.SHA256(name + timestamp).toString(CryptoJS.enc.Hex).toString(0, 8);
+}
+
+export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): Storage {
+  if (!data.name) {
+    throw new Error('Storage name is required');
+  }
+
+  return {
+    id: data.id ?? generateId(data.name),
+    name: data.name,
+    icon: data.icon ?? STORAGE_DEFAULT_ICON,
+    items: data.items ?? [],
+    children: data.children ?? []
+  };
+}
+
+export function getDefaultIcon(node: Node): string {
+  if ('items' in node) {
+    return STORAGE_DEFAULT_ICON;
+  } else if ('quantity' in node) {
+    return ITEM_DEFAULT_ICON;
+  }
+  throw Error('Unknown node type');
 }
