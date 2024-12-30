@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import SearchBar from '../components/search/SearchBar.vue';
 import ItemTree from '../components/search/ItemTree.vue';
-import useStorage from '../composables/useStorage';
 import { ref } from 'vue'
 
 const searchText = ref('')
