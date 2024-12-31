@@ -76,6 +76,28 @@
           <option value="lent">Lent</option>
         </select>
       </div>
+
+      <!-- Icon selection grid -->
+      <div>
+        <label for="icon" class="block text-gray-700">Icon:</label>
+        <div class="grid grid-cols-4 gap-4">
+          <div
+            v-for="iconName in iconOptions"
+            :key="iconName"
+            @click="item.icon = iconName"
+            :class="{
+              'border-2 border-blue-500': item.icon === iconName,
+              'cursor-pointer': true,
+            }"
+            class="flex justify-center items-center p-2 rounded-md hover:bg-gray-100"
+          >
+            <component
+              :is="getIconComponent(iconName)"
+              class="w-8 h-8 text-gray-500"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Storage selected -->
@@ -89,6 +111,28 @@
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500"
           placeholder="Enter storage name"
         />
+      </div>
+
+      <!-- Icon selection grid for storage -->
+      <div>
+        <label for="icon" class="block text-gray-700">Icon:</label>
+        <div class="grid grid-cols-4 gap-4">
+          <div
+            v-for="iconName in iconOptions"
+            :key="iconName"
+            @click="storage.icon = iconName"
+            :class="{
+              'border-2 border-green-500': storage.icon === iconName,
+              'cursor-pointer': true,
+            }"
+            class="flex justify-center items-center p-2 rounded-md hover:bg-gray-100"
+          >
+            <component
+              :is="getIconComponent(iconName)"
+              class="w-8 h-8 text-gray-500"
+            />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -106,6 +150,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import * as OutlineIcons from '@heroicons/vue/24/outline';
 import { useRoute, useRouter } from 'vue-router';
 import { useStorageStore } from '@/composables/useStorage';
 import { createItem, createStorage, ItemStatus } from '@/types/models';
@@ -118,13 +163,32 @@ const item = ref({
   name: '',
   category: '',
   quantity: 1,
-  status: ItemStatus.Available
+  status: ItemStatus.Available,
+  icon: 'WrenchIcon', // Default icon for item
 });
 
 // Storage fields
 const storage = ref({
-  name: ''
+  name: '',
+  icon: 'FolderIcon', // Default icon for storage
 });
+
+// List of available icons
+const iconOptions = ref([
+  'FolderIcon',
+  'WrenchIcon',
+  'GiftIcon',
+  'IdentificationIcon',
+  'HomeIcon',
+  'KeyIcon',
+  'RadioIcon',
+  'ScissorsIcon'
+]);
+
+// Function to dynamically get the selected icon component
+const getIconComponent = (iconName: string) => {
+  return OutlineIcons[iconName as keyof typeof OutlineIcons];
+};
 
 const route = useRoute();
 const router = useRouter();
@@ -145,8 +209,11 @@ const handleAdd = () => {
       return;
     }
 
-    // Create a new storage
-    const newStorage = createStorage({ name: storage.value.name });
+    // Create a new storage with the selected icon
+    const newStorage = createStorage({
+      name: storage.value.name,
+      icon: storage.value.icon, // Include selected icon
+    });
 
     // Add storage to the store
     storageStore.addStorage(newStorage, parentId);
@@ -158,12 +225,13 @@ const handleAdd = () => {
       return;
     }
 
-    // Create a new item
+    // Create a new item with the selected icon
     const newItem = createItem({
       name: item.value.name,
       category: item.value.category,
       quantity: item.value.quantity,
-      status: item.value.status
+      status: item.value.status,
+      icon: item.value.icon, // Include selected icon
     });
 
     // Add item to the parent storage
@@ -175,13 +243,12 @@ const handleAdd = () => {
 </script>
 
 <style scoped>
-/* Custom Radio Button Style */
-input[type="radio"].peer:checked + span {
-  background-color: #4caf50;
-  border-color: transparent;
+/* Custom styles for the icon grid */
+.cursor-pointer:hover {
+  background-color: #f0f0f0;
 }
 
-input[type="radio"].peer:checked + span + span {
-  color: #4caf50;
+.border-2 {
+  border-width: 2px;
 }
 </style>
