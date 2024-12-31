@@ -1,36 +1,50 @@
 <template>
-  <div class="p-4">
+  <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
     <!-- Radio buttons for item or storage selection -->
-    <div class="mb-4">
-      <label>
-        <input type="radio" v-model="selectedOption" value="item" />
-        Item
+    <div class="mb-6 flex items-center space-x-6">
+      <label class="flex items-center space-x-2">
+        <input
+          type="radio"
+          v-model="selectedOption"
+          value="item"
+          id="item-radio"
+          class="hidden peer"
+        />
+        <span class="w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent cursor-pointer"></span>
+        <span class="text-gray-700 font-medium">Item</span>
       </label>
-      <label class="ml-4">
-        <input type="radio" v-model="selectedOption" value="storage" />
-        Storage
+      <label class="flex items-center space-x-2">
+        <input
+          type="radio"
+          v-model="selectedOption"
+          value="storage"
+          id="storage-radio"
+          class="hidden peer"
+        />
+        <span class="w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-green-500 peer-checked:border-transparent cursor-pointer"></span>
+        <span class="text-gray-700 font-medium">Storage</span>
       </label>
     </div>
 
     <!-- Show fields when 'Item' is selected -->
-    <div v-if="selectedOption === 'item'">
-      <div class="mb-4">
-        <label for="name" class="block">Name:</label>
+    <div v-if="selectedOption === 'item'" class="space-y-6">
+      <div>
+        <label for="name" class="block text-gray-700">Name:</label>
         <input
           type="text"
           id="name"
           v-model="item.name"
-          class="border p-2 rounded w-full"
+          class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter item name"
         />
       </div>
 
-      <div class="mb-4">
-        <label for="category" class="block">Category:</label>
+      <div>
+        <label for="category" class="block text-gray-700">Category:</label>
         <select
           id="category"
           v-model="item.category"
-          class="border p-2 rounded w-full"
+          class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Select a category</option>
           <option value="electronics">Electronics</option>
@@ -39,24 +53,24 @@
         </select>
       </div>
 
-      <div class="mb-4">
-        <label for="quantity" class="block">Quantity:</label>
+      <div>
+        <label for="quantity" class="block text-gray-700">Quantity:</label>
         <input
           type="number"
           id="quantity"
           v-model.number="item.quantity"
-          class="border p-2 rounded w-full"
+          class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter quantity"
           min="1"
         />
       </div>
 
-      <div class="mb-4">
-        <label for="status" class="block">Status:</label>
+      <div>
+        <label for="status" class="block text-gray-700">Status:</label>
         <select
           id="status"
           v-model="item.status"
-          class="border p-2 rounded w-full"
+          class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="available">Available</option>
           <option value="lent">Lent</option>
@@ -65,23 +79,28 @@
     </div>
 
     <!-- Storage selected -->
-    <div v-if="selectedOption === 'storage'">
-      <div class="mb-4">
-        <label for="name" class="block">Storage Name:</label>
+    <div v-if="selectedOption === 'storage'" class="space-y-6">
+      <div>
+        <label for="name" class="block text-gray-700">Storage Name:</label>
         <input
           type="text"
           id="name"
           v-model="storage.name"
-          class="border p-2 rounded w-full"
+          class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500"
           placeholder="Enter storage name"
         />
       </div>
     </div>
 
     <!-- Submit button -->
-    <button @click="handleAdd" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
-      Add
-    </button>
+    <div class="mt-6">
+      <button
+        @click="handleAdd"
+        class="bg-blue-500 text-white py-3 px-6 rounded-lg w-full hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+      >
+        Add
+      </button>
+    </div>
   </div>
 </template>
 
@@ -156,8 +175,13 @@ const handleAdd = () => {
 </script>
 
 <style scoped>
-/* Custom styles for the form */
-.mb-4 {
-  margin-bottom: 1rem;
+/* Custom Radio Button Style */
+input[type="radio"].peer:checked + span {
+  background-color: #4caf50;
+  border-color: transparent;
+}
+
+input[type="radio"].peer:checked + span + span {
+  color: #4caf50;
 }
 </style>
