@@ -39,7 +39,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Build project
-        run: npm run build
+        run: VITE_BASE_URL=/${{ github.event.repository.name }}/ npm run build # specify your base URL to match GitHub Pages
 
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v3
