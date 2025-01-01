@@ -145,6 +145,31 @@ export const useStorageStore = defineStore('storage', {
       }
     },
 
+    /**
+     * Get the path of a storage unit by its id.
+     * The path is represented as an array of storage names.
+     * @param storageId The id of the storage unit.
+     * @returns The path as an array of storage names, or null if the storage is not found.
+     */
+    getStoragePath(storageId: string): string[] | null {
+      const findPath = (id: string, storages: Storage[], path: string[]): string[] | null => {
+        for (const storage of storages) {
+          const currentPath = [...path, storage.name]; // Append current storage name to path
+          if (storage.id === id) {
+            return currentPath;
+          }
+          const result = findPath(id, storage.children, currentPath);
+          if (result) {
+            return result;
+          }
+        }
+        return null;
+      };
+
+      return findPath(storageId, this.storage, []);
+    },
+
+
     saveStorageToLocalStorage() {
       localStorage.setItem('storageData', JSON.stringify(this.storage));
     },

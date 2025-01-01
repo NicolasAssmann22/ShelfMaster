@@ -26,6 +26,15 @@
       </label>
     </div>
 
+    <!-- Display the path -->
+    <div v-if="path && path.length" class="mb-6 text-sm text-gray-600">
+      <span v-for="(part, index) in path" :key="index">
+        <span>{{ part }}</span>
+        <span v-if="index < path.length - 1" class="text-gray-400 mx-1">/</span>
+      </span>
+    </div>
+
+
     <!-- Show fields when 'Item' is selected -->
     <div v-if="selectedOption === 'item'" class="space-y-6">
       <div>
@@ -149,14 +158,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import * as OutlineIcons from '@heroicons/vue/24/outline';
 import { useRoute, useRouter } from 'vue-router';
 import { useStorageStore } from '@/composables/useStorage';
 import { createItem, createStorage, ItemStatus } from '@/types/models';
+import { computed, ref } from 'vue';
+
 
 // Radio button option (either 'item' or 'storage')
-const selectedOption = ref<string>('');
+const selectedOption = ref<string>('item');
 
 // Item fields
 const item = ref({
@@ -171,6 +181,11 @@ const item = ref({
 const storage = ref({
   name: '',
   icon: 'FolderIcon', // Default icon for storage
+});
+
+const path = computed(() => {
+  if (!route.query.id) return [];
+  return storageStore.getStoragePath(route.query.id as string) || [];
 });
 
 // List of available icons
