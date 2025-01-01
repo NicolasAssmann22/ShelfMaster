@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Tree from '../ui/TreeComponent.vue';
-import type { Node } from '@/types/models';
-import { mapStoragesToTreeNodes, findTreeNodeById } from '@/utils/treeMapper';
-import {useStorageStore} from '@/composables/useStorage';
-import { type SearchResult, searchNodesByName } from '@/utils/search';
-import type { TreeNodeData } from '@/types/tree'
+import type { Node } from '../../types/models';
+import { mapStoragesToTreeNodes, findTreeNodeById } from '../../utils/treeMapper';
+import {useStorageStore} from '../../composables/useStorage';
+import { type SearchResult, searchNodesByName } from '../../utils/search';
+import type { TreeNodeData } from '../../types/tree';
 import type TreeComponent from '../ui/TreeComponent.vue';
 import { onMounted } from 'vue';
 
@@ -61,7 +61,7 @@ watch(() => props.searchText, (newText) => {
 
   results.forEach((result) => {
     expandNodesAlongPath(result.path);
-    result.path.forEach((node) => {
+    result.path.forEach((node: Node) => {
       const treeNode = findTreeNodeById(node.id);
       if (treeNode) {
         treeRef.value!.highlightNode(treeNode);

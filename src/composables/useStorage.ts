@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import type { Item, Storage } from '@/types/models';
-import { createItem, createStorage } from '@/types/models';
+import type { Item, Storage } from '../types/models';
+import { createItem, createStorage } from '../types/models';
 import storageData from '../assets/storage-data.json';
 
 export const useStorageStore = defineStore('storage', {
@@ -20,8 +20,8 @@ export const useStorageStore = defineStore('storage', {
         console.log('Loading storage data...');
         // Wenn keine Daten im localStorage sind, lade sie von der JSON-Datei oder initialisiere sie
         const processStorage = (storage: Partial<Storage> & Pick<Storage, 'name'>): Storage => {
-          const items = storage.items?.map((item) => createItem(item as Partial<Item> & Pick<Item, 'name'>)) ?? [];
-          const children = storage.children?.map((child) => processStorage(child as Partial<Storage> & Pick<Storage, 'name'>)) ?? [];
+          const items = storage.items?.map((item: Item) => createItem(item as Partial<Item> & Pick<Item, 'name'>)) ?? [];
+          const children = storage.children?.map((child: Storage) => processStorage(child as Partial<Storage> & Pick<Storage, 'name'>)) ?? [];
           return createStorage({ ...storage, items, children });
         };
 
@@ -138,7 +138,7 @@ export const useStorageStore = defineStore('storage', {
       }
       const parent = this.findStorageById(item.parentId!, this.storage);
       if (parent) {
-        const index = parent.items.findIndex((item) => item.id === itemId);
+        const index = parent.items.findIndex((item: Item) => item.id === itemId);
         if (index !== -1) {
           parent.items.splice(index, 1);
         }

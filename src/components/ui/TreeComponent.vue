@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineExpose, type PropType } from 'vue'
+import { type PropType } from 'vue'
 import type { TreeNodeData } from '../../types/tree.ts';
 import TreeNode from './TreeNode.vue';
 

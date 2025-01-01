@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { defineProps, computed } from 'vue'
-import type { TreeNodeData } from '@/types/tree'
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/vue/24/solid'
-import * as OutlineIcons from '@heroicons/vue/24/outline'
-import AddField from "@/components/fields/AddField.vue"
-import { useStorageStore } from "@/composables/useStorage"
+import { computed, type PropType } from 'vue';
+import type { TreeNodeData } from '../../types/tree';
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
+import * as OutlineIcons from '@heroicons/vue/24/outline';
+import AddField from '../../components/fields/AddField.vue';
+import { useStorageStore } from '../../composables/useStorage';
 
 const storageStore = useStorageStore()
 

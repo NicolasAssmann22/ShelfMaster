@@ -160,8 +160,8 @@
 <script setup lang="ts">
 import * as OutlineIcons from '@heroicons/vue/24/outline';
 import { useRoute, useRouter } from 'vue-router';
-import { useStorageStore } from '@/composables/useStorage';
-import { createItem, createStorage, ItemStatus } from '@/types/models';
+import { useStorageStore } from '../composables/useStorage';
+import { createItem, createStorage, ItemStatus } from '../types/models';
 import { computed, ref } from 'vue';
 
 

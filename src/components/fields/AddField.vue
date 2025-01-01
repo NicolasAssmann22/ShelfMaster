@@ -9,10 +9,10 @@
 
 
 <script setup lang="ts">
-import { defineEmits, defineProps } from 'vue'
-import type { TreeNodeData } from '@/types/tree'
+import { type PropType } from 'vue';
+import type { TreeNodeData } from '../../types/tree';
 import { useRouter } from 'vue-router';
-import {PlusIcon} from "@heroicons/vue/24/outline";
+import {PlusIcon} from '@heroicons/vue/24/outline';
 
 // Props: parentNode, der den Knoten enthält, zu dem wir das Feld hinzufügen wollen
 defineProps({

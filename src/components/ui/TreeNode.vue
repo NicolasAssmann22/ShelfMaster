@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { TreeNodeData } from '@/types/tree'
-import { defineProps, type PropType } from 'vue'
-import { computed } from 'vue'
-import {useStorageStore} from "@/composables/useStorage";
-import TreeNodeField from "@/components/fields/TreeNodeField.vue";
+import type { TreeNodeData } from '../../types/tree';
+import { type PropType } from 'vue';
+import { computed } from 'vue';
+import {useStorageStore} from '../../composables/useStorage';
+import TreeNodeField from '../../components/fields/TreeNodeField.vue';
 
 const storageStore = useStorageStore();
 
