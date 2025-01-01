@@ -1,23 +1,28 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Tree from '../ui/TreeComponent.vue';
-import type { Node, Storage, Item } from '../../types/models';
-import { mapStoragesToTreeNodes, findTreeNodeById } from '../../utils/treeMapper';
-import useStorage from '../../composables/useStorage';
-import { type SearchResult, searchNodesByName } from '../../utils/search';
-import type { TreeNodeData } from '../../types/tree'
+import type { Node } from '@/types/models';
+import { mapStoragesToTreeNodes, findTreeNodeById } from '@/utils/treeMapper';
+import {useStorageStore} from '@/composables/useStorage';
+import { type SearchResult, searchNodesByName } from '@/utils/search';
+import type { TreeNodeData } from '@/types/tree'
 import type TreeComponent from '../ui/TreeComponent.vue';
+import { onMounted } from 'vue';
 
 /**
  * This component handles domain-specific logic such as mapping from the model to the tree component and filtering the tree based on search results.
  */
 
-const { state } = useStorage();
+const storageStore = useStorageStore();
+
+onMounted(() => {
+  storageStore.loadStorageData();
+});
 const props = defineProps<{
   searchText: string;
 }>();
 
-const treeData = computed(() => mapStoragesToTreeNodes(state.storage));
+const treeData = computed(() => mapStoragesToTreeNodes(storageStore.storage));
 const treeRef = ref<InstanceType<typeof TreeComponent> | null>(null);
 
 const expandNodesAlongPath = (path: Node[]) => {
@@ -42,13 +47,13 @@ const expandNodesAlongPath = (path: Node[]) => {
 
 
 watch(() => props.searchText, (newText) => {
-  const results: SearchResult[] = searchNodesByName(newText, state.storage);
+  const results: SearchResult[] = searchNodesByName(newText, storageStore.storage);
 
   if (results.length === 0) {
     return;
   }
 
-  console.log(state.storage);
+  console.log(storageStore.storage);
   console.log(results);
 
   treeRef.value!.collapseAllNodes();

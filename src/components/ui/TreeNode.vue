@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import type { TreeNodeData } from '../../types/tree.ts'
+import type { TreeNodeData } from '@/types/tree'
 import { defineProps, type PropType } from 'vue'
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/vue/24/solid'
-import * as OutlineIcons from '@heroicons/vue/24/outline'
+import { computed } from 'vue'
+import {useStorageStore} from "@/composables/useStorage";
+import TreeNodeField from "@/components/fields/TreeNodeField.vue";
+
+const storageStore = useStorageStore();
 
 const props = defineProps({
   node: {
@@ -10,20 +13,12 @@ const props = defineProps({
     required: true,
   },
 })
-
-const emit = defineEmits<{
+defineEmits<{
   (e: 'toggle', node: TreeNodeData): void
-}>()
-
-const handleClick = (event: MouseEvent) => {
-  event.stopPropagation()
-  emit('toggle', props.node)
-}
-
-const getIconComponent = (iconName: string) => {
-  return OutlineIcons[iconName as keyof typeof OutlineIcons] // Return the component if it exists
-}
-
+}>();
+computed(() => {
+  return storageStore.findStorageById(props.node.id, storageStore.storage) != null;
+});
 // Transition Hooks
 const beforeEnter = (el: Element): void => {
   const htmlEl = el as HTMLElement
@@ -51,20 +46,8 @@ const leave = (el: Element): void => {
 
 <template>
   <li>
-    <div
-      @click="handleClick"
-      :class="['flex items-center space-x-2 cursor-pointer p-2 hover:bg-gray-100 rounded', { highlighted: node.highlighted }]"
-    >
-      <span v-if="node.icon" class="text-gray-500">
-        <!-- Dynamically render the icon -->
-        <component :is="getIconComponent(node.icon)" class="w-5 h-5 text-gray-500" />
-      </span>
-      <span class="font-medium">{{ node.label }}</span>
-      <span v-if="node.children?.length" class="text-gray-500">
-        <ChevronDownIcon v-if="node.expanded" class="w-5 h-5 text-gray-500"></ChevronDownIcon>
-        <ChevronRightIcon v-else class="w-5 h-5 text-gray-500"></ChevronRightIcon>
-      </span>
-    </div>
+    <TreeNodeField :node="node" @toggle="$emit('toggle', $event)" />
+
     <transition name="expand-fade-y" @before-enter="beforeEnter" @enter="enter" @leave="leave">
       <ul v-if="node.expanded && node.children" class="pl-4 space-y-1">
         <TreeNode
@@ -73,33 +56,11 @@ const leave = (el: Element): void => {
           :node="child"
           @toggle="$emit('toggle', $event)"
         />
+
       </ul>
     </transition>
   </li>
+
 </template>
 
-<style scoped>
-/* Custom transition effects */
-.expand-fade-y-enter-active,
-.expand-fade-y-leave-active {
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease
-}
-
-.expand-fade-y-enter,
-.expand-fade-y-leave-to {
-  transform: scaleY(0); /* Initial collapsed state */
-  opacity: 0; /* Initial hidden state */
-}
-
-.expand-fade-y-enter-to,
-.expand-fade-y-leave {
-  transform: scaleY(1); /* Full height when expanded */
-  opacity: 1; /* Fully visible */
-}
-
-.highlighted {
-  background-color: yellow;
-}
-</style>
+<style scoped></style>

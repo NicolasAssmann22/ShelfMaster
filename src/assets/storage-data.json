@@ -1,92 +1,108 @@
 {
   "storage": [
     {
+      "id": "1",
       "name": "Kitchen",
       "items": [
-        { "name": "Knife", "category": "Cutlery", "quantity": 2, "status": "Available" },
-        { "name": "Fork", "category": "Cutlery", "quantity": 4, "status": "Lent" }
+        { "id": "1-1", "name": "Knife", "category": "Cutlery", "quantity": 2, "status": "Available" },
+        { "id": "1-2", "name": "Fork", "category": "Cutlery", "quantity": 4, "status": "Lent" }
       ],
       "children": [
         {
+          "id": "1-1-1",
           "name": "Cupboard",
           "items": [
-            { "name": "Plate", "category": "Dinnerware", "quantity": 6, "status": "Available" },
-            { "name": "Bowl", "category": "Dinnerware", "quantity": 3, "status": "Available" }
+            { "id": "1-1-1-1", "name": "Plate", "category": "Dinnerware", "quantity": 6, "status": "Available" },
+            { "id": "1-1-1-2", "name": "Bowl", "category": "Dinnerware", "quantity": 3, "status": "Available" }
           ],
           "children": []
         },
         {
+          "id": "1-1-2",
           "name": "Drawer",
           "items": [
-            { "name": "Spoon", "category": "Cutlery", "quantity": 3, "status": "Available" },
-            { "name": "Teaspoon", "category": "Cutlery", "quantity": 5, "status": "Lent" }
+            { "id": "1-1-2-1", "name": "Spoon", "category": "Cutlery", "quantity": 3, "status": "Available" },
+            { "id": "1-1-2-2", "name": "Teaspoon", "category": "Cutlery", "quantity": 5, "status": "Lent" }
           ],
           "children": []
         }
       ]
     },
     {
+      "id": "2",
       "name": "Bathroom",
       "items": [
-        { "name": "Toothbrush", "category": "Toiletries", "quantity": 2, "status": "Available" },
-        { "name": "Toothpaste", "category": "Toiletries", "quantity": 1, "status": "Available" }
+        { "id": "2-1", "name": "Toothbrush", "category": "Toiletries", "quantity": 2, "status": "Available" },
+        { "id": "2-2", "name": "Toothpaste", "category": "Toiletries", "quantity": 1, "status": "Available" }
       ],
       "children": [
         {
+          "id": "2-1-1",
           "name": "Cabinet",
           "items": [
-            { "name": "Towel", "category": "Linen", "quantity": 4, "status": "Available" },
-            { "name": "Soap", "category": "Toiletries", "quantity": 2, "status": "Lent" }
+            { "id": "2-1-1-1", "name": "Towel", "category": "Linen", "quantity": 4, "status": "Available" },
+            { "id": "2-1-1-2", "name": "Soap", "category": "Toiletries", "quantity": 2, "status": "Lent" }
           ],
           "children": []
         }
       ]
     },
     {
+      "id": "3",
       "name": "Deep Nested Storage",
       "items": [],
       "children": [
         {
+          "id": "3-1",
           "name": "Level 1",
           "items": [],
           "children": [
             {
+              "id": "3-1-1",
               "name": "Level 2",
               "items": [],
               "children": [
                 {
+                  "id": "3-1-1-1",
                   "name": "Level 3",
                   "items": [],
                   "children": [
                     {
+                      "id": "3-1-1-1-1",
                       "name": "Level 4",
                       "items": [],
                       "children": [
                         {
+                          "id": "3-1-1-1-1-1",
                           "name": "Level 5",
                           "items": [],
                           "children": [
                             {
+                              "id": "3-1-1-1-1-1-1",
                               "name": "Level 6",
                               "items": [],
                               "children": [
                                 {
+                                  "id": "3-1-1-1-1-1-1-1",
                                   "name": "Level 7",
                                   "items": [],
                                   "children": [
                                     {
+                                      "id": "3-1-1-1-1-1-1-1-1",
                                       "name": "Level 8",
                                       "items": [],
                                       "children": [
                                         {
+                                          "id": "3-1-1-1-1-1-1-1-1-1",
                                           "name": "Level 9",
                                           "items": [],
                                           "children": [
                                             {
+                                              "id": "3-1-1-1-1-1-1-1-1-1-1",
                                               "name": "Level 10",
                                               "items": [
-                                                { "name": "Item 1", "category": "Category 1", "quantity": 1, "status": "Available" },
-                                                { "name": "Item 2", "category": "Category 2", "quantity": 2, "status": "Lent" }
+                                                { "id": "3-1-1-1-1-1-1-1-1-1-1-1", "name": "Item 1", "category": "Category 1", "quantity": 1, "status": "Available" },
+                                                { "id": "3-1-1-1-1-1-1-1-1-1-1-2", "name": "Item 2", "category": "Category 2", "quantity": 2, "status": "Lent" }
                                               ],
                                               "children": []
                                             }
