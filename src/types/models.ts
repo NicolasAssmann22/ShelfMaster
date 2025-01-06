@@ -21,8 +21,8 @@ export interface Item extends Node {
 
 // Enum for item statuses
 export enum ItemStatus {
-  Available = 'Available', // Item is available
-  Lent = 'Lent', // Item is lent out
+  Available = 'available', // Item is available
+  Lent = 'lent', // Item is lent out
 }
 
 // Interface for storage that can hold items and other storage
