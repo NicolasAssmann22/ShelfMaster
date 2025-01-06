@@ -225,5 +225,44 @@ export const useStorageStore = defineStore('storage', {
       // Save the updated storage data
       this.saveStorageToLocalStorage()
     },
+    /**
+     * Deletes a node (either a Storage or an Item) based on the provided ID.
+     * @param nodeId The ID of the node to delete.
+     */
+    deleteNode(nodeId: string) {
+      const deleteNodeRecursively = (id: string, storages: Storage[]): boolean => {
+        for (let i = 0; i < storages.length; i++) {
+          const storage = storages[i]
+
+          // Check if the current storage matches the ID to delete
+          if (storage.id === id) {
+            storages.splice(i, 1) // Remove the storage
+            return true
+          }
+
+          // Check if any item within the current storage matches the ID to delete
+          for (let j = 0; j < storage.items.length; j++) {
+            if (storage.items[j].id === id) {
+              storage.items.splice(j, 1) // Remove the item
+              return true
+            }
+          }
+
+          // Recursive call for child storages
+          if (deleteNodeRecursively(id, storage.children)) {
+            return true
+          }
+        }
+        return false // Node not found
+      }
+
+      // Attempt to delete the node
+      if (!deleteNodeRecursively(nodeId, this.storage)) {
+        throw new Error(`Failed to delete node with id ${nodeId}`) // Error if node is not found
+      }
+
+      // Save the updated data to localStorage
+      this.saveStorageToLocalStorage()
+    },
   },
 })

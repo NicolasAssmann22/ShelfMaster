@@ -103,6 +103,13 @@
         >
           Save
         </button>
+        <button
+          type="button"
+          @click="handleDelete"
+          class="w-full bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300"
+        >
+          Delete
+        </button>
       </form>
     </div>
 
@@ -149,6 +156,15 @@ const handleFormSubmit = () => {
   if (node.value) {
     store.updateNode(node.value as Storage)
     router.push('/')
+  }
+}
+
+const handleDelete = () => {
+  if (node.value) {
+    store.deleteNode(node.value.id)
+    router.push('/') // Navigate back to the main page after deletion
+  } else {
+    alert('Node not found')
   }
 }
 
