@@ -7,6 +7,13 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const props = defineProps({
+  id: {
+    type: String,
+    required: true,
+  },
+})
+</script>
 
 <style scoped></style>
