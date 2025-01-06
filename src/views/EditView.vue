@@ -147,11 +147,7 @@ const isItem = computed(() => node.value && 'quantity' in node.value)
 
 const handleFormSubmit = () => {
   if (node.value) {
-    if (isItem.value) {
-      store.updateItem(node.value as Item)
-    } else {
-      store.updateStorage(node.value as Storage)
-    }
+    store.updateNode(node.value as Storage)
     router.push('/')
   }
 }

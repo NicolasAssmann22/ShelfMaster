@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Item, Storage } from '../types/models'
+import type { Node, Item, Storage } from '../types/models'
 import { createItem, createStorage } from '../types/models'
 import storageData from '../assets/storage-data.json'
 
@@ -207,89 +207,20 @@ export const useStorageStore = defineStore('storage', {
       return null // Node not found
     },
     /**
-     * Update an existing Item in the storage tree.
-     * If the hierarchy changes, the corresponding `parentId` of the Item will be updated.
-     * @param updatedItem The updated item.
-     * @param newParentId The new parent ID for the item (if moving the item to another storage).
-     * @throws Error if the item with the given id is not found.
-     */
-    updateItem(updatedItem: Item, newParentId?: string | null) {
-      // Find the item to update
-      const item = this.findItemById(updatedItem.id, this.storage)
-      if (!item) {
-        throw new Error(`Failed to find item with id ${updatedItem.id}`)
-      }
-
-      // Handle hierarchy change if `newParentId` is provided
-      if (newParentId !== undefined) {
-        const oldParent = this.findStorageById(item.parentId!, this.storage)
-        const newParent = this.findStorageById(newParentId, this.storage)
-
-        if (!newParent) {
-          throw new Error(`Failed to find new parent storage with id ${newParentId}`)
-        }
-
-        // Remove item from old parent
-        if (oldParent) {
-          const index = oldParent.items.findIndex((i) => i.id === updatedItem.id)
-          if (index !== -1) {
-            oldParent.items.splice(index, 1)
-          }
-        }
-
-        // Add item to new parent
-        newParent.items.push(updatedItem)
-
-        // Update parentId of the item
-        updatedItem.parentId = newParentId
-      }
-
-      // Update the item's properties
-      Object.assign(item, updatedItem)
-
-      // Save the updated storage data
-      this.saveStorageToLocalStorage()
-    },
-    /**
      * Update an existing Storage in the storage tree.
      * If the hierarchy changes, the corresponding `parentId` of the Storage will be updated.
-     * @param updatedStorage The updated storage.
-     * @param newParentId The new parent ID for the storage (if moving the storage to another storage).
+     * @param node The updated storage.
      * @throws Error if the storage with the given id is not found.
      */
-    updateStorage(updatedStorage: Storage, newParentId?: string | null) {
+    updateNode(node: Node) {
       // Find the storage to update
-      const storage = this.findStorageById(updatedStorage.id, this.storage)
+      const storage = this.findNodeById(node.id, this.storage)
       if (!storage) {
-        throw new Error(`Failed to find storage with id ${updatedStorage.id}`)
-      }
-
-      // Handle hierarchy change if `newParentId` is provided
-      if (newParentId !== undefined) {
-        const oldParent = this.findStorageById(storage.parentId!, this.storage)
-        const newParent = this.findStorageById(newParentId, this.storage)
-
-        if (!newParent) {
-          throw new Error(`Failed to find new parent storage with id ${newParentId}`)
-        }
-
-        // Remove storage from old parent
-        if (oldParent) {
-          const index = oldParent.children.findIndex((child) => child.id === updatedStorage.id)
-          if (index !== -1) {
-            oldParent.children.splice(index, 1)
-          }
-        }
-
-        // Add storage to new parent
-        newParent.children.push(updatedStorage)
-
-        // Update parentId of the storage
-        updatedStorage.parentId = newParentId
+        throw new Error(`Failed to find node with id ${node.id}`)
       }
 
       // Update the storage's properties
-      Object.assign(storage, updatedStorage)
+      Object.assign(storage, node)
 
       // Save the updated storage data
       this.saveStorageToLocalStorage()
