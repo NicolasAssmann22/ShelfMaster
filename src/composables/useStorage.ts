@@ -198,7 +198,7 @@ export const useStorageStore = defineStore('storage', {
         }
 
         // Recursive search in child storages
-        const foundInChildren = findNodeById(id, storage.children)
+        const foundInChildren = this.findNodeById(id, storage.children)
         if (foundInChildren) {
           return foundInChildren
         }

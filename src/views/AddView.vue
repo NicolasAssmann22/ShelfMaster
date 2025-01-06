@@ -47,6 +47,7 @@
           id="name"
           v-model="item.name"
           ref="itemNameInput"
+          :class="{ 'required': !item.name }"
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter item name"
         />
@@ -119,10 +120,23 @@
           id="name"
           v-model="storage.name"
           ref="storageNameInput"
+          :class="{ 'required': !storage.name }"
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500"
           placeholder="Enter storage name"
         />
       </div>
+
+      <FieldLabel id="description" ref="descriptionField">
+        <template #label>Description:</template>
+        <template #input>
+          <textarea
+            v-model="storage.description"
+            id="description"
+            class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter description"
+          ></textarea>
+        </template>
+      </FieldLabel>
 
       <!-- Icon selection grid for storage -->
       <div>
@@ -160,9 +174,10 @@
 import * as OutlineIcons from '@heroicons/vue/24/outline'
 import { useRoute, useRouter } from 'vue-router'
 import { useStorageStore } from '../composables/useStorage'
-import { createItem, createStorage, ItemStatus } from '../types/models'
+import { useIconsStore } from '../composables/iconsStore'
+import { createItem, createStorage, type Item, type Storage, ItemStatus } from '../types/models'
 import { onMounted, computed, ref } from 'vue'
-import { useIconsStore } from '@/composables/iconsStore'
+import FieldLabel from '../components/fields/FieldLabel.vue'
 
 // Radio button option (either 'item' or 'storage')
 const selectedOption = ref<string>('item')
@@ -171,7 +186,7 @@ const itemNameInput = ref<HTMLInputElement | null>(null)
 const storageNameInput = ref<HTMLInputElement | null>(null)
 
 // Item fields
-const item = ref({
+const item = ref<Partial<Item>>({
   name: '',
   category: '',
   quantity: 1,
@@ -180,8 +195,9 @@ const item = ref({
 })
 
 // Storage fields
-const storage = ref({
+const storage = ref<Partial<Storage>>({
   name: '',
+  description: '',
   icon: 'FolderIcon', // Default icon for storage
 })
 
@@ -269,5 +285,9 @@ const handleAdd = () => {
 
 .border-2 {
   border-width: 2px;
+}
+
+.required {
+  border-color: #ff0000;
 }
 </style>

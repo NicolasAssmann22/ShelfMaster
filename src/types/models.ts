@@ -29,6 +29,7 @@ export enum ItemStatus {
 export interface Storage extends Node {
   items: Item[]; // Items stored in this storage
   children: Storage[]; // Child storages under this storage
+  description?: string; // Description of the storage
 }
 
 // Function to create a new item with validation and defaults
@@ -65,6 +66,7 @@ export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): S
     icon: data.icon ?? STORAGE_DEFAULT_ICON, // Default icon for storage
     items: data.items ?? [], // Default to an empty list of items
     children: data.children ?? [], // Default to no child storages
+    description: data.description, // Optional description field
   };
 }
 

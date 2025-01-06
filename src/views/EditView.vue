@@ -14,8 +14,8 @@
             <input
               type="text"
               v-model="node.name"
-              required
               id="name"
+              :class="{ 'required': !node.name }"
               class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter name"
             />
@@ -28,7 +28,7 @@
             <template #input>
               <input
                 type="text"
-                v-model="node.category"
+                v-model="(node as Item).category"
                 id="category"
                 class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter category"
@@ -41,7 +41,7 @@
             <template #input>
               <input
                 type="number"
-                v-model.number="node.quantity"
+                v-model.number="(node as Item).quantity"
                 id="quantity"
                 min="1"
                 class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -54,7 +54,7 @@
             <template #label>Status:</template>
             <template #input>
               <select
-                v-model="node.status"
+                v-model="(node as Item).status"
                 id="status"
                 class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -70,7 +70,7 @@
             <template #label>Description:</template>
             <template #input>
               <textarea
-                v-model="node.description"
+                v-model="(node as Storage).description"
                 id="description"
                 class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter description"
@@ -120,9 +120,10 @@
 </template>
 
 <script setup lang="ts">
-import { useStorageStore } from '../composables/useStorage'
 import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import type { Storage, Item, Node } from '../types/models'
+import { useStorageStore } from '../composables/useStorage'
 import { useIconsStore } from '../composables/iconsStore'
 import * as OutlineIcons from '@heroicons/vue/24/outline'
 import FieldLabel from '../components/fields/FieldLabel.vue'
@@ -135,13 +136,13 @@ const iconsStore = useIconsStore()
 const iconOptions = iconsStore.iconOptions
 
 const nodeId = route.query.id
-const node = ref(null)
+const node = ref<Node | null>(null)
 
-let previousName
+let previousName: string | undefined = undefined
 
 onMounted(() => {
   if (nodeId) {
-    node.value = store.findNodeById(nodeId, store.storage)
+    node.value = store.findNodeById(nodeId as string, store.storage) as Node | null
     if (!node.value) {
       alert('Node not found')
       router.push('/')
@@ -174,3 +175,7 @@ const getIconComponent = (iconName: string) => {
   return OutlineIcons[iconName as keyof typeof OutlineIcons]
 }
 </script>
+
+
+
+
