@@ -147,21 +147,6 @@ const isItem = computed(() => node.value && 'quantity' in node.value)
 
 const handleFormSubmit = () => {
   if (node.value) {
-    // Zugriff auf die Input-Werte über Refs
-    const nameValue = (nameField.value as HTMLInputElement).value
-    const categoryValue = (categoryField.value as HTMLInputElement)?.value
-    const quantityValue = (quantityField.value as HTMLInputElement)?.value
-    const statusValue = (statusField.value as HTMLSelectElement)?.value
-    const descriptionValue = (descriptionField.value as HTMLTextAreaElement)?.value
-
-    console.log('Form Values:', {
-      nameValue,
-      categoryValue,
-      quantityValue,
-      statusValue,
-      descriptionValue,
-    })
-
     if (isItem.value) {
       store.updateItem(node.value as Item)
     } else {
