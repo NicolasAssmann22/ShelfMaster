@@ -11,7 +11,9 @@
           id="item-radio"
           class="hidden peer"
         />
-        <span class="w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent cursor-pointer"></span>
+        <span
+          class="w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent cursor-pointer"
+        ></span>
         <span class="text-gray-700 font-medium">Item</span>
       </label>
       <label class="flex items-center space-x-2">
@@ -22,7 +24,9 @@
           id="storage-radio"
           class="hidden peer"
         />
-        <span class="w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-green-500 peer-checked:border-transparent cursor-pointer"></span>
+        <span
+          class="w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-green-500 peer-checked:border-transparent cursor-pointer"
+        ></span>
         <span class="text-gray-700 font-medium">Storage</span>
       </label>
     </div>
@@ -35,7 +39,6 @@
       </span>
     </div>
 
-
     <!-- Show fields when 'Item' is selected -->
     <div v-if="selectedOption === 'item'" class="space-y-6">
       <div>
@@ -44,6 +47,8 @@
           type="text"
           id="name"
           v-model="item.name"
+          ref="itemNameInput"
+          :class="{ 'required': !item.name }"
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter item name"
         />
@@ -101,10 +106,7 @@
             }"
             class="flex justify-center items-center p-2 rounded-md hover:bg-gray-100"
           >
-            <component
-              :is="getIconComponent(iconName)"
-              class="w-8 h-8 text-gray-500"
-            />
+            <component :is="getIconComponent(iconName)" class="w-8 h-8 text-gray-500" />
           </div>
         </div>
       </div>
@@ -118,10 +120,24 @@
           type="text"
           id="name"
           v-model="storage.name"
+          ref="storageNameInput"
+          :class="{ 'required': !storage.name }"
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500"
           placeholder="Enter storage name"
         />
       </div>
+
+      <FieldLabel id="description" ref="descriptionField">
+        <template #label>Description:</template>
+        <template #input>
+          <textarea
+            v-model="storage.description"
+            id="description"
+            class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter description"
+          ></textarea>
+        </template>
+      </FieldLabel>
 
       <!-- Icon selection grid for storage -->
       <div>
@@ -137,10 +153,7 @@
             }"
             class="flex justify-center items-center p-2 rounded-md hover:bg-gray-100"
           >
-            <component
-              :is="getIconComponent(iconName)"
-              class="w-8 h-8 text-gray-500"
-            />
+            <component :is="getIconComponent(iconName)" class="w-8 h-8 text-gray-500" />
           </div>
         </div>
       </div>
@@ -159,87 +172,94 @@
 </template>
 
 <script setup lang="ts">
-import * as OutlineIcons from '@heroicons/vue/24/outline';
-import { useRoute, useRouter } from 'vue-router';
-import { useStorageStore } from '../composables/useStorage';
-import { createItem, createStorage, ItemStatus } from '../types/models';
-import { computed, ref } from 'vue';
-import BackButton from '@/components/ui/BackButton.vue'
-
+import * as OutlineIcons from '@heroicons/vue/24/outline'
+import { useRoute, useRouter } from 'vue-router'
+import { useStorageStore } from '../composables/useStorage'
+import { useIconsStore } from '../composables/iconsStore'
+import { createItem, createStorage, type Item, type Storage, ItemStatus } from '../types/models'
+import { onMounted, computed, ref } from 'vue'
+import FieldLabel from '../components/fields/FieldLabel.vue'
+import BackButton from '../components/ui/BackButton.vue'
 
 // Radio button option (either 'item' or 'storage')
-const selectedOption = ref<string>('item');
+const selectedOption = ref<string>('item')
+
+const itemNameInput = ref<HTMLInputElement | null>(null)
+const storageNameInput = ref<HTMLInputElement | null>(null)
 
 // Item fields
-const item = ref({
+const item = ref<Partial<Item>>({
   name: '',
   category: '',
   quantity: 1,
   status: ItemStatus.Available,
   icon: 'WrenchIcon', // Default icon for item
-});
+})
 
 // Storage fields
-const storage = ref({
+const storage = ref<Partial<Storage>>({
   name: '',
+  description: '',
   icon: 'FolderIcon', // Default icon for storage
-});
+})
 
 const path = computed(() => {
-  if (!route.query.id) return [];
-  return storageStore.getStoragePath(route.query.id as string) || [];
-});
+  if (!route.query.id) return []
+  return storageStore.getStoragePath(route.query.id as string) || []
+})
 
 // List of available icons
-const iconOptions = ref([
-  'FolderIcon',
-  'WrenchIcon',
-  'GiftIcon',
-  'IdentificationIcon',
-  'HomeIcon',
-  'KeyIcon',
-  'RadioIcon',
-  'ScissorsIcon'
-]);
+const iconsStore = useIconsStore()
+const iconOptions = iconsStore.iconOptions
 
 // Function to dynamically get the selected icon component
 const getIconComponent = (iconName: string) => {
-  return OutlineIcons[iconName as keyof typeof OutlineIcons];
-};
+  return OutlineIcons[iconName as keyof typeof OutlineIcons]
+}
 
-const route = useRoute();
-const router = useRouter();
-const storageStore = useStorageStore();
+const route = useRoute()
+const router = useRouter()
+const storageStore = useStorageStore()
+
+const setFocus = () => {
+  if (selectedOption.value === 'item') {
+    itemNameInput.value?.focus()
+  } else {
+    storageNameInput.value?.focus()
+  }
+}
+
+onMounted(setFocus)
 
 // Handle the "Add" button click
 const handleAdd = () => {
-  const parentId = route.query.id as string | null;
+  const parentId = route.query.id as string | null
 
   if (!parentId) {
-    alert('Parent ID is required.');
-    return;
+    alert('Parent ID is required.')
+    return
   }
 
   if (selectedOption.value === 'storage') {
     if (!storage.value.name) {
-      alert('Storage name is required.');
-      return;
+      alert('Storage name is required.')
+      return
     }
 
     // Create a new storage with the selected icon
     const newStorage = createStorage({
       name: storage.value.name,
       icon: storage.value.icon, // Include selected icon
-    });
+    })
 
     // Add storage to the store
-    storageStore.addStorage(newStorage, parentId);
+    storageStore.addStorage(newStorage, parentId)
 
-    router.push({ name: 'home' }); // Navigate back to home or another view
+    router.push({ name: 'home' }) // Navigate back to home or another view
   } else if (selectedOption.value === 'item') {
     if (!item.value.name) {
-      alert('Item name is required.');
-      return;
+      alert('Item name is required.')
+      return
     }
 
     // Create a new item with the selected icon
@@ -249,14 +269,14 @@ const handleAdd = () => {
       quantity: item.value.quantity,
       status: item.value.status,
       icon: item.value.icon, // Include selected icon
-    });
+    })
 
     // Add item to the parent storage
-    storageStore.addItem(newItem, parentId);
+    storageStore.addItem(newItem, parentId)
 
-    router.push({ name: 'home' });
+    router.push({ name: 'home' })
   }
-};
+}
 </script>
 
 <style scoped>
@@ -267,5 +287,9 @@ const handleAdd = () => {
 
 .border-2 {
   border-width: 2px;
+}
+
+.required {
+  border-color: #ff0000;
 }
 </style>

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, type PropType } from 'vue';
-import type { TreeNodeData } from '../../types/tree';
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
-import * as OutlineIcons from '@heroicons/vue/24/outline';
-import AddField from '../../components/fields/AddField.vue';
-import { useStorageStore } from '../../composables/useStorage';
+import { computed, type PropType } from 'vue'
+import type { TreeNodeData } from '../../types/tree'
+import * as OutlineIcons from '@heroicons/vue/24/outline'
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/vue/24/solid'
+import { useStorageStore } from '../../composables/useStorage'
+import AddField from '../../components/fields/AddField.vue'
+import EditField from '../../components/fields/EditField.vue'
 
 const storageStore = useStorageStore()
 
@@ -39,8 +40,12 @@ const isStorageNode = computed(() => {
 
 <template>
   <div
-      @click="handleClick"
-      :class="['flex items-center space-x-2 cursor-pointer p-2 rounded', { highlighted: node.highlighted }]">
+    @click="handleClick"
+    :class="[
+      'flex items-center space-x-2 cursor-pointer p-2 rounded',
+      { highlighted: node.highlighted },
+    ]"
+  >
     <div class="flex items-center space-x-2 flex-grow hover:bg-gray-200 hover:text-gray-700">
       <span v-if="node.icon" class="text-gray-500">
         <component :is="getIconComponent(node.icon)" class="w-5 h-5 text-gray-500" />
@@ -54,8 +59,8 @@ const isStorageNode = computed(() => {
 
     <!-- Align AddField to the right -->
     <AddField v-if="isStorageNode" :node="node" />
+    <EditField :node="node" />
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
