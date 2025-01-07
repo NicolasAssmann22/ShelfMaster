@@ -8,9 +8,13 @@ const props = defineProps({
     type: Array as PropType<TreeNodeData[]>,
     required: true
   },
+  dnd: {
+    type: Boolean,
+    default: true
+  }
 });
 
-const expandNode = (node: TreeNodeData) => {
+const expandNode = (node: TreeNodeData,) => {
   node.expanded = true; // Expand the node
   collapseAllChildren(node); // Collapse all children
 };
@@ -61,6 +65,7 @@ defineExpose({
         v-for="node in props.nodes"
         :key="node.id"
         :node="node"
+        :dnd="props.dnd"
         @toggle="toggleNode"
       />
     </ul>
