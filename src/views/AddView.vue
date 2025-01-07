@@ -1,4 +1,5 @@
 <template>
+  <BackButton />
   <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
     <!-- Radio buttons for item or storage selection -->
     <div class="mb-6 flex items-center space-x-6">
@@ -178,6 +179,7 @@ import { useIconsStore } from '../composables/iconsStore'
 import { createItem, createStorage, type Item, type Storage, ItemStatus } from '../types/models'
 import { onMounted, computed, ref } from 'vue'
 import FieldLabel from '../components/fields/FieldLabel.vue'
+import BackButton from '../components/ui/BackButton.vue'
 
 // Radio button option (either 'item' or 'storage')
 const selectedOption = ref<string>('item')
