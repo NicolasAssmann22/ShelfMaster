@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type PropType } from 'vue'
+import { type PropType, ref } from 'vue'
 import type { TreeNodeData } from '../../types/tree.ts';
 import TreeNode from './TreeNode.vue';
 
@@ -13,6 +13,30 @@ const props = defineProps({
     default: true
   }
 });
+
+const draggedNode = ref<TreeNodeData | null>(null);
+
+const onDragStart = (node: TreeNodeData) => {
+  if (!props.dnd) {
+    return;
+  }
+  draggedNode.value = node;
+};
+
+const onDrop = (targetNode: TreeNodeData) => {
+  if (!props.dnd || !draggedNode.value) {
+    return;
+  }
+  console.log('draggedNode', draggedNode.value);
+  console.log('targetNode', targetNode);
+
+  if (draggedNode.value === targetNode) {
+    console.log('Cannot drop node onto itself');
+    return;
+  }
+
+  draggedNode.value = null;
+};
 
 const expandNode = (node: TreeNodeData,) => {
   node.expanded = true; // Expand the node
@@ -66,6 +90,8 @@ defineExpose({
         :key="node.id"
         :node="node"
         :dnd="props.dnd"
+        @dragstart="onDragStart"
+        @drop="onDrop"
         @toggle="toggleNode"
       />
     </ul>
