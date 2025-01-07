@@ -1,4 +1,5 @@
 <template>
+  <BackButton />
   <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
     <!-- Radio buttons for item or storage selection -->
     <div class="mb-6 flex items-center space-x-6">
@@ -163,6 +164,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useStorageStore } from '../composables/useStorage';
 import { createItem, createStorage, ItemStatus } from '../types/models';
 import { computed, ref } from 'vue';
+import BackButton from '@/components/ui/BackButton.vue'
 
 
 // Radio button option (either 'item' or 'storage')
