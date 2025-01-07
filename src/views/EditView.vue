@@ -1,7 +1,7 @@
 <template>
+  <BackButton />
   <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
     <h1 class="text-2xl font-bold mb-6">Edit {{ isItem ? 'Item' : 'Storage' }}</h1>
-
     <div v-if="node">
       <form @submit.prevent="handleFormSubmit" class="space-y-6">
         <FieldLabel id="name" ref="nameField">
@@ -127,6 +127,7 @@ import { useStorageStore } from '../composables/useStorage'
 import { useIconsStore } from '../composables/iconsStore'
 import * as OutlineIcons from '@heroicons/vue/24/outline'
 import FieldLabel from '../components/fields/FieldLabel.vue'
+import BackButton from '../components/ui/BackButton.vue'
 
 const route = useRoute()
 const router = useRouter()
