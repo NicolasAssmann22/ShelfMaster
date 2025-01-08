@@ -17,7 +17,7 @@ const props = defineProps({
   },
 })
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'toggle', node: TreeNodeData): void
   (e: 'dragstart', node: TreeNodeData): void
   (e: 'drop', node: TreeNodeData): void
@@ -27,6 +27,30 @@ defineEmits<{
 computed(() => {
   return storageStore.findStorageById(props.node.id, storageStore.storage) != null;
 })
+
+const handleDragStart = (event: DragEvent, node: TreeNodeData): void => {
+  if (props.dnd) {
+    event.stopPropagation();
+    emit('dragstart', node);
+  }
+}
+
+const onDragOver = (event: DragEvent): void => {
+  if (props.dnd) {
+    event.preventDefault();
+  }
+}
+
+const onDrop = (event: DragEvent, node: TreeNodeData): void => {
+  if (props.dnd) {
+    event.preventDefault();
+    emit('drop', node);
+  }
+}
+
+const onToggle = (node: TreeNodeData): void => {
+  emit('toggle', node)
+}
 
 // Transition Hooks
 const beforeEnter = (el: Element): void => {
@@ -58,13 +82,17 @@ const leave = (el: Element): void => {
 <template>
   <li
     :draggable="dnd"
-    @dragstart="$emit('dragstart', node)"
-    @dragover="dnd && $event.preventDefault()"
-    @drop="$emit('drop', node)"
+    @dragstart="handleDragStart($event, node)"
+    @dragover="onDragOver"
+    @drop="onDrop($event, node)"
   >
     <TreeNodeField
       :node="node"
-      @toggle="$emit('toggle', $event)" />
+      :draggable="dnd"
+      @dragstart.stop="handleDragStart($event, node)"
+      @toggle="onToggle"
+    />
+
     <transition
       name="expand-fade-y"
       @before-enter="beforeEnter"
