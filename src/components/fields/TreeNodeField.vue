@@ -34,7 +34,7 @@ const getIconComponent = (iconName: string) => {
 
 // Computed for checking if the node is a storage node
 const isStorageNode = computed(() => {
-  return storageStore.findStorageById(props.node.id, storageStore.storage) != null
+  return storageStore.findStorageById(props.node.id) != null
 })
 </script>
 

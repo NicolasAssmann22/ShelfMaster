@@ -7,13 +7,13 @@ const ITEM_DEFAULT_ICON = 'WrenchIcon';
 // Base interface for tree nodes
 export interface Node {
   id: string; // Unique identifier for the node
+  parentId: string | undefined; // ID of the parent node (if any)
   name: string; // Name of the node
   icon: string; // Icon representing the node
 }
 
 // Interface for items within storage
 export interface Item extends Node {
-  parentId?: string | undefined; // ID of the parent storage
   category?: string; // Category of the item
   quantity: number; // Quantity of the item
   status: ItemStatus; // Status of the item (Available or Lent)
@@ -40,6 +40,7 @@ export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
 
   return {
     id: data.id ?? generateId(data.name), // Generate or use provided ID
+    parentId: data.parentId, // Parent ID if provided
     name: data.name, // Mandatory field
     category: data.category?.toLowerCase().trim() ?? undefined, // Normalize category
     quantity: data.quantity ?? 1, // Default quantity is 1
@@ -62,6 +63,7 @@ export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): S
 
   return {
     id: data.id ?? generateId(data.name), // Generate or use provided ID
+    parentId: data.parentId, // Parent ID if provided
     name: data.name, // Mandatory field
     icon: data.icon ?? STORAGE_DEFAULT_ICON, // Default icon for storage
     items: data.items ?? [], // Default to an empty list of items

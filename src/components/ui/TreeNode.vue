@@ -25,7 +25,7 @@ const emit = defineEmits<{
 
 
 computed(() => {
-  return storageStore.findStorageById(props.node.id, storageStore.storage) != null;
+  return storageStore.findStorageById(storageStore.storage, props.node.id) != null;
 })
 
 const handleDragStart = (event: DragEvent, node: TreeNodeData): void => {

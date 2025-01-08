@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue'
 import Tree from '../ui/TreeComponent.vue';
 import type { Node } from '../../types/models';
 import { mapStoragesToTreeNodes, findTreeNodeById } from '../../utils/treeMapper';
-import {useStorageStore} from '../../composables/useStorage';
+import { useStorageStore } from '../../composables/useStorage';
 import { type SearchResult, searchNodesByName } from '../../utils/search';
 import type { TreeNodeData } from '../../types/tree';
 import type TreeComponent from '../ui/TreeComponent.vue';
@@ -68,13 +68,21 @@ watch(() => props.searchText, (newText) => {
       }
     });
   });
-
 });
+
+const handleNodeDrop = (draggedNode: TreeNodeData, targetNode: TreeNodeData) => {
+  console.log('handleNodeDrop', draggedNode, targetNode);
+  storageStore.moveNode(draggedNode.id, targetNode.id);
+};
 
 </script>
 
 <template>
-  <Tree :nodes="treeData" ref="treeRef" />
+  <Tree
+    :nodes="treeData"
+    ref="treeRef"
+    @node-drop="handleNodeDrop"
+  />
 </template>
 
 <style scoped>

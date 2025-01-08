@@ -14,6 +14,10 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits<{
+  (e: 'node-drop', draggedNode: TreeNodeData, targetNode: TreeNodeData): void;
+}>();
+
 const draggedNode = ref<TreeNodeData | null>(null);
 
 const onDragStart = (node: TreeNodeData) => {
@@ -27,14 +31,13 @@ const onDrop = (targetNode: TreeNodeData) => {
   if (!props.dnd || !draggedNode.value) {
     return;
   }
-  console.log('draggedNode', draggedNode.value);
-  console.log('targetNode', targetNode);
 
   if (draggedNode.value === targetNode) {
     console.log('Cannot drop node onto itself');
     return;
   }
 
+  emit('node-drop', draggedNode.value, targetNode);
   draggedNode.value = null;
 };
 
