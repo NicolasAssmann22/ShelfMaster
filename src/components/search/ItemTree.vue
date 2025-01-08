@@ -113,7 +113,7 @@ const onDragOver = (targetNode: TreeNodeData) => {
     return;
   }
   resetHighlighting();
-  if (storageStore.isMoveAllowed(draggedNode.value.id, targetNode.id)) {
+  if (storageStore.canMoveTo(draggedNode.value.id, targetNode.id)) {
     targetNode.highlighted = true;
   }
 };

@@ -359,21 +359,25 @@ export const useStorageStore = defineStore('storage', {
       saveToLocalStorage(this.storage);
     },
 
-    isMoveAllowed(nodeId: string, parentStorageId: string): boolean {
+    canMoveTo(nodeId: string, targetId: string): boolean {
       const node = getNodeById(this.storage, nodeId);
       if (!node) {
         return false;
       }
 
-      const parentStorage = getParentStorage(this.storage, parentStorageId);
-      if (!parentStorage) {
+      if (node.parentId === targetId) {
+        return false;
+      }
+
+      const targetNode = getNodeById(this.storage, targetId);
+      if (!targetNode || !isStorage(targetNode)) {
         return false;
       }
 
       if (isStorage(node)) {
-        return !isChild(node, parentStorage) && node.id !== parentStorageId;
+        return !isChild(node, targetNode as Storage) && node.id !== targetId;
       } else if (isItem(node)) {
-        return (node as Item).parentId !== parentStorageId;
+        return (node as Item).parentId !== targetId;
       }
 
       return false;

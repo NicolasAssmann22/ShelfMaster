@@ -101,6 +101,8 @@ const leave = (el: Element): void => {
       :node="node"
       :draggable="dnd"
       @dragstart.stop="onDragStart($event, node)"
+      @dragover.stop="onDragOver($event, node)"
+      @dragend.stop="onDragEnd($event, node)"
       @toggle="onToggle"
     />
 
