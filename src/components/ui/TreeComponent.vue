@@ -10,11 +10,14 @@ const props = defineProps({
   },
   dnd: {
     type: Boolean,
-    default: true
+    default: false
   }
 });
 
 const emit = defineEmits<{
+  (e: 'dragstart', node: TreeNodeData): void;
+  (e: 'dragover', node: TreeNodeData): void;
+  (e: 'dragend', node: TreeNodeData): void;
   (e: 'node-drop', draggedNode: TreeNodeData, targetNode: TreeNodeData): void;
 }>();
 
@@ -24,32 +27,41 @@ const onDragStart = (node: TreeNodeData) => {
   if (!props.dnd) {
     return;
   }
+  emit('dragstart', node);
   draggedNode.value = node;
-};
+}
+
+const onDragOver = (node: TreeNodeData) => {
+  if (props.dnd && node) {
+    emit('dragover', node);
+  }
+}
+
+const onDragEnd = (node: TreeNodeData) => {
+  if (!props.dnd) {
+    return;
+  }
+  emit('dragend', draggedNode.value);
+  draggedNode.value = null;
+}
 
 const onDrop = (targetNode: TreeNodeData) => {
   if (!props.dnd || !draggedNode.value) {
     return;
   }
-
-  if (draggedNode.value === targetNode) {
-    console.log('Cannot drop node onto itself');
-    return;
-  }
-
   emit('node-drop', draggedNode.value, targetNode);
   draggedNode.value = null;
-};
+}
 
 const expandNode = (node: TreeNodeData,) => {
   node.expanded = true; // Expand the node
   collapseAllChildren(node); // Collapse all children
-};
+}
 
 const toggleNode = (node: TreeNodeData) => {
   node.expanded = !node.expanded; // Toggle the expanded state of the node
   collapseAllChildren(node)
-};
+}
 
 const highlightNode = (node: TreeNodeData) => {
   node.highlighted = true; // Highlight the node
@@ -94,6 +106,8 @@ defineExpose({
         :node="node"
         :dnd="props.dnd"
         @dragstart="onDragStart"
+        @dragover="onDragOver"
+        @dragend="onDragEnd"
         @drop="onDrop"
         @toggle="toggleNode"
       />

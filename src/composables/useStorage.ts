@@ -33,7 +33,7 @@ const isItem = (node: Node): node is Item => {
 }
 
 // find a node by its id
-const findNodeById = (storages: Storage[], id: string, ): Node | null => {
+const getNodeById = (storages: Storage[], id: string, ): Node | null => {
   for (const storage of storages) {
     if (storage.id === id) {
       return storage // Found a storage node
@@ -46,7 +46,7 @@ const findNodeById = (storages: Storage[], id: string, ): Node | null => {
     }
 
     // Recursive search in child storages
-    const foundInChildren = findNodeById(storage.children, id)
+    const foundInChildren = getNodeById(storage.children, id)
     if (foundInChildren) {
       return foundInChildren
     }
@@ -56,26 +56,20 @@ const findNodeById = (storages: Storage[], id: string, ): Node | null => {
 }
 
 // check if a node is a descendant of another node
-const isDescendant = (storages: Storage[], nodeId: string, potentialAncestorId: string): boolean => {
-  const node = findNodeById(storages, nodeId);
-  if (!node) return false;
-
-  if (isStorage(node)) {
-    const subStorage = node as Storage;
-    for (const child of subStorage.children) {
-      if (child.id === potentialAncestorId || isDescendant(storages, child.id, potentialAncestorId)) {
-        return true;
-      }
+const isChild = (storage: Storage, potentialChild: Storage): boolean => {
+  for (const child of storage.children) {
+    if (child.id === potentialChild.id || isChild(child, potentialChild)) {
+      return true;
     }
   }
   return false;
 }
 
 const getParentStorage = (storage: Storage[], newParentId: string): Storage | null => {
-  const parentNode = findNodeById(storage, newParentId);
+  const parentNode = getNodeById(storage, newParentId);
   if (parentNode && isItem(parentNode)) {
     const item = parentNode as Item;
-    return item.parentId ? findNodeById(storage, item.parentId) as Storage : null;
+    return item.parentId ? getNodeById(storage, item.parentId) as Storage : null;
   }
   return parentNode as Storage | null;
 }
@@ -89,7 +83,7 @@ const moveNodeToStorage = (
 ) => {
   if (isStorage(node)) {
     const storage = node as Storage;
-    if (!targetStorage.children.find((child) => child.id === storage.id)) {
+    if (!targetStorage.children.find((child) => child.id === storage.id) && !isChild(storage, targetStorage)) {
       deleteNode(storage.id);
       addStorage(storage, targetStorage.id);
     }
@@ -226,12 +220,21 @@ export const useStorageStore = defineStore('storage', {
     },
 
     /**
+     * Find a node (Item or Storage) by its ID.
+     * @param id The ID of the node to find.
+     * @returns The found node (Item or Storage), or null if not found.
+     */
+    findNodeById(id: string): Node | null {
+      return getNodeById(this.storage, id)
+    },
+
+    /**
      * Find a storage by its ID.
      * @param storageId The ID of the storage to find.
      * @returns The found storage, or null if not found.
      */
     findStorageById(storageId: string): Storage | null {
-      const node = this.findNodeById(this.storage, storageId);
+      const node = getNodeById(this.storage, storageId);
       return node && isStorage(node) ? (node as Storage) : null;
     },
 
@@ -241,7 +244,7 @@ export const useStorageStore = defineStore('storage', {
      * @returns The found item, or null if not found.
      */
     findItemById(itemId: string): Item | null {
-      const node = this.findNodeById(this.storage, itemId);
+      const node = getNodeById(this.storage, itemId);
       return node && isItem(node) ? (node as Item) : null;
     },
 
@@ -269,32 +272,6 @@ export const useStorageStore = defineStore('storage', {
       return findPath(storageId, this.storage, [])
     },
 
-    /**
-     * Find a node (Item or Storage) by its ID.
-     * @param storages The array of storages to search within.
-     * @param id The ID of the node to find.
-     * @returns The found node (Item or Storage), or null if not found.
-     */
-    findNodeById(storages: Storage[], id: string): Node | null {
-      for (const storage of storages) {
-        if (storage.id === id) {
-          return storage;  // Found a storage node
-        }
-
-        for (const item of storage.items) {
-          if (item.id === id) {
-            return item;  // Found an item node
-          }
-        }
-
-        // Recursive search in child storages
-        const foundInChildren = this.findNodeById(storage.children, id);
-        if (foundInChildren) {
-          return foundInChildren;
-        }
-      }
-      return null;  // Node not found
-    },
 
     /**
      * Update an existing Storage in the storage tree.
@@ -304,7 +281,7 @@ export const useStorageStore = defineStore('storage', {
      */
     updateNode(node: Node) {
       // Find the storage to update
-      const storage = this.findNodeById(this.storage, node.id)
+      const storage = getNodeById(this.storage, node.id)
       if (!storage) {
         throw new Error(`Failed to find node with id ${node.id}`)
       }
@@ -362,16 +339,12 @@ export const useStorageStore = defineStore('storage', {
      * @param newParentId The ID of the new parent Storage.
      */
     moveNode(nodeId: string, newParentId: string) {
-      const node = this.findNodeById(this.storage, nodeId);
+      const node = getNodeById(this.storage, nodeId);
       if (!node) {
         throw new Error(`Failed to find node with id ${nodeId}`);
       }
 
-      if (isDescendant(this.storage, newParentId, nodeId)) {
-        throw new Error("Cannot move a node to its descendant");
-      }
-
-      const newParent = this.findNodeById(this.storage, newParentId);
+      const newParent = getNodeById(this.storage, newParentId);
       if (!newParent) {
         throw new Error(`Failed to find new parent with id ${newParentId}`);
       }
@@ -382,7 +355,28 @@ export const useStorageStore = defineStore('storage', {
       }
 
       moveNodeToStorage(node, parentStorage, this.deleteNode, this.addStorage, this.addItem);
+
       saveToLocalStorage(this.storage);
     },
+
+    isMoveAllowed(nodeId: string, parentStorageId: string): boolean {
+      const node = getNodeById(this.storage, nodeId);
+      if (!node) {
+        return false;
+      }
+
+      const parentStorage = getParentStorage(this.storage, parentStorageId);
+      if (!parentStorage) {
+        return false;
+      }
+
+      if (isStorage(node)) {
+        return !isChild(node, parentStorage) && node.id !== parentStorageId;
+      } else if (isItem(node)) {
+        return (node as Item).parentId !== parentStorageId;
+      }
+
+      return false;
+    }
   }
 })

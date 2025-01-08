@@ -20,24 +20,34 @@ const props = defineProps({
 const emit = defineEmits<{
   (e: 'toggle', node: TreeNodeData): void
   (e: 'dragstart', node: TreeNodeData): void
+  (e: 'dragover', node: TreeNodeData): void
+  (e: 'dragend', node: TreeNodeData): void
   (e: 'drop', node: TreeNodeData): void
 }>();
 
 
 computed(() => {
-  return storageStore.findStorageById(storageStore.storage, props.node.id) != null;
+  return storageStore.findStorageById(props.node.id) != null;
 })
 
-const handleDragStart = (event: DragEvent, node: TreeNodeData): void => {
+const onDragStart = (event: DragEvent, node: TreeNodeData): void => {
   if (props.dnd) {
     event.stopPropagation();
     emit('dragstart', node);
   }
 }
 
-const onDragOver = (event: DragEvent): void => {
+const onDragOver = (event: DragEvent, node: TreeNodeData): void => {
+  if (props.dnd && node) {
+    emit('dragover', node);
+    event.preventDefault();
+  }
+}
+
+const onDragEnd = (event: DragEvent, node: TreeNodeData): void => {
   if (props.dnd) {
     event.preventDefault();
+    emit('dragend', node);
   }
 }
 
@@ -82,14 +92,15 @@ const leave = (el: Element): void => {
 <template>
   <li
     :draggable="dnd"
-    @dragstart="handleDragStart($event, node)"
-    @dragover="onDragOver"
+    @dragstart="onDragStart($event, node)"
+    @dragover="onDragOver($event, node)"
+    @dragend="onDragEnd($event, node)"
     @drop="onDrop($event, node)"
   >
     <TreeNodeField
       :node="node"
       :draggable="dnd"
-      @dragstart.stop="handleDragStart($event, node)"
+      @dragstart.stop="onDragStart($event, node)"
       @toggle="onToggle"
     />
 
@@ -107,6 +118,8 @@ const leave = (el: Element): void => {
           :node="child"
           :dnd="dnd"
           @dragstart="$emit('dragstart', $event)"
+          @dragover="$emit('dragover', $event)"
+          @dragend="$emit('dragend', $event)"
           @drop="$emit('drop', $event)"
           @toggle="$emit('toggle', $event)"
         />
@@ -116,4 +129,8 @@ const leave = (el: Element): void => {
 
 </template>
 
-<style scoped></style>
+<style scoped>
+.highlighted {
+  background-color: lightgray;
+}
+</style>

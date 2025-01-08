@@ -14,7 +14,10 @@ const handleSearch = (text: string) => {
 <template>
   <div class="search-view">
     <SearchBar @search="handleSearch"/>
-    <ItemTree :searchText="searchText"/>
+    <ItemTree
+      :searchText="searchText"
+      :dnd="true"
+    />
   </div>
 </template>
 
