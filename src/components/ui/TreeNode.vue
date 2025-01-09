@@ -99,6 +99,7 @@ const leave = (el: Element): void => {
     <TreeNodeField
       :node="node"
       :draggable="dnd"
+      class="hover:bg-gray-100 rounded"
       @dragstart.stop="onDragStart($event, node)"
       @dragover.stop="onDragOver($event, node)"
       @dragend.stop="onDragEnd($event, node)"
@@ -112,7 +113,8 @@ const leave = (el: Element): void => {
       @leave="leave">
       <ul
         v-if="node.expanded && node.children"
-        class="pl-4 space-y-1">
+        class="pl-4 space-y-1 "
+      >
         <TreeNode
           v-for="child in node.children"
           :key="child.id"
