@@ -143,7 +143,7 @@ let previousName: string | undefined = undefined
 
 onMounted(() => {
   if (nodeId) {
-    node.value = store.findNodeById(nodeId as string, store.storage) as Node | null
+    node.value = store.findNodeById(nodeId as string) as Node | null
     if (!node.value) {
       alert('Node not found')
       router.push('/')

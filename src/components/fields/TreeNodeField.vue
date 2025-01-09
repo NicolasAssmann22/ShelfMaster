@@ -34,7 +34,7 @@ const getIconComponent = (iconName: string) => {
 
 // Computed for checking if the node is a storage node
 const isStorageNode = computed(() => {
-  return storageStore.findStorageById(props.node.id, storageStore.storage) != null
+  return storageStore.findStorageById(props.node.id) != null
 })
 </script>
 
@@ -46,7 +46,7 @@ const isStorageNode = computed(() => {
       { highlighted: node.highlighted },
     ]"
   >
-    <div class="flex items-center space-x-2 flex-grow hover:bg-gray-200 hover:text-gray-700">
+    <div class="flex items-center space-x-2 flex-grow hover:text-gray-700">
       <span v-if="node.icon" class="text-gray-500">
         <component :is="getIconComponent(node.icon)" class="w-5 h-5 text-gray-500" />
       </span>
