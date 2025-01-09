@@ -16,7 +16,6 @@ const handleSearch = (text: string) => {
     <SearchBar @search="handleSearch"/>
     <ItemTree
       :searchText="searchText"
-      :dnd="true"
     />
   </div>
 </template>
