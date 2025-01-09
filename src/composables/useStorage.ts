@@ -83,17 +83,13 @@ const moveNodeToStorage = (
 ) => {
   if (isStorage(node)) {
     const storage = node as Storage;
-    if (!targetStorage.children.find((child) => child.id === storage.id) && !isChild(storage, targetStorage)) {
-      deleteNode(storage.id);
-      addStorage(storage, targetStorage.id);
-    }
+    deleteNode(storage.id);
+    addStorage(storage, targetStorage.id);
   } else if (isItem(node)) {
     const item = node as Item;
-    if (!targetStorage.items.find((child) => child.id === item.id)) {
-      deleteNode(item.id);
-      addItem(item, targetStorage.id);
+    deleteNode(item.id);
+    addItem(item, targetStorage.id);
     }
-  }
 };
 
 
@@ -334,22 +330,24 @@ export const useStorageStore = defineStore('storage', {
     },
 
     /**
-     * Move a node (either a Storage or an Item) to a new parent Storage.
+     * Move a node (either a Storage or an Item) to a new target node.
+     * If the target node is an item its parent storage will be taken as target.<br/>
+     * <b>IMPORTANT:</b> This method should be used after checking if the move is allowed with <code>canMoveTo</code>.
      * @param nodeId The ID of the node to move.
-     * @param newParentId The ID of the new parent Storage.
+     * @param targetId The ID of the new parent Storage.
      */
-    moveNode(nodeId: string, newParentId: string) {
+    moveNode(nodeId: string, targetId: string) {
       const node = getNodeById(this.storage, nodeId);
       if (!node) {
         throw new Error(`Failed to find node with id ${nodeId}`);
       }
 
-      const newParent = getNodeById(this.storage, newParentId);
+      const newParent = getNodeById(this.storage, targetId);
       if (!newParent) {
-        throw new Error(`Failed to find new parent with id ${newParentId}`);
+        throw new Error(`Failed to find new parent with id ${targetId}`);
       }
 
-      const parentStorage = getParentStorage(this.storage, newParentId);
+      const parentStorage = getParentStorage(this.storage, targetId);
       if (!parentStorage) {
         throw new Error("Failed to find a valid parent node to move to");
       }
@@ -359,7 +357,14 @@ export const useStorageStore = defineStore('storage', {
       saveToLocalStorage(this.storage);
     },
 
-    canMoveTo(nodeId: string, targetId: string): boolean {
+    /**
+     * Check if a node can be moved to.
+     * @param nodeId
+     * @param targetId
+     * @param allowItems If true, items are allowed as target nodes (default: false).
+     * @returns true if the node can be moved to the target, false otherwise.
+     */
+    canMoveTo(nodeId: string, targetId: string, allowItems: boolean = false): boolean {
       const node = getNodeById(this.storage, nodeId);
       if (!node) {
         return false;
@@ -370,17 +375,19 @@ export const useStorageStore = defineStore('storage', {
       }
 
       const targetNode = getNodeById(this.storage, targetId);
-      if (!targetNode || !isStorage(targetNode)) {
+      if (!targetNode) {
+        return false;
+      }
+
+      if (!allowItems && isItem(targetNode)) {
         return false;
       }
 
       if (isStorage(node)) {
         return !isChild(node, targetNode as Storage) && node.id !== targetId;
-      } else if (isItem(node)) {
-        return (node as Item).parentId !== targetId;
       }
 
-      return false;
+      return !!isItem(node);
     }
   }
 })

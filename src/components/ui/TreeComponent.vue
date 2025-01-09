@@ -41,7 +41,7 @@ const onDragEnd = (node: TreeNodeData) => {
   if (!props.dnd) {
     return;
   }
-  emit('dragend', draggedNode.value);
+  emit('dragend', draggedNode.value as TreeNodeData);
   draggedNode.value = null;
 }
 

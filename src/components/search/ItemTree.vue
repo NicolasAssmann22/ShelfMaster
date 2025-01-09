@@ -148,7 +148,12 @@ watch(() => props.searchText, (newText) => {
 });
 
 const handleNodeDrop = (draggedNode: TreeNodeData, targetNode: TreeNodeData) => {
-  storageStore.moveNode(draggedNode.id, targetNode.id);
+  if (!props.dnd || !draggedNode) {
+    return;
+  }
+  if (storageStore.canMoveTo(draggedNode.id, targetNode.id, true)) {
+    storageStore.moveNode(draggedNode.id, targetNode.id);
+  }
 };
 
 </script>

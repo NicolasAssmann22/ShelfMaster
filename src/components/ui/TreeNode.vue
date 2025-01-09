@@ -25,7 +25,6 @@ const emit = defineEmits<{
   (e: 'drop', node: TreeNodeData): void
 }>();
 
-
 computed(() => {
   return storageStore.findStorageById(props.node.id) != null;
 })
@@ -39,8 +38,8 @@ const onDragStart = (event: DragEvent, node: TreeNodeData): void => {
 
 const onDragOver = (event: DragEvent, node: TreeNodeData): void => {
   if (props.dnd && node) {
-    emit('dragover', node);
     event.preventDefault();
+    emit('dragover', node);
   }
 }
 
