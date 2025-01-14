@@ -3,10 +3,10 @@ import SearchBar from '../components/search/SearchBar.vue';
 import ItemTree from '../components/search/ItemTree.vue';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { PlusIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, PencilIcon } from '@heroicons/vue/24/outline'
 
 const categories = ref([
-  { value: '', label: 'Select Category' },
+  { value: '', label: 'All Categories' },
   { value: 'cutley', label: 'cutley' },
   { value: 'toiletries', label: 'toiletries' },
   { value: 'linen', label: 'linen' },
@@ -23,6 +23,12 @@ const handleSearch = (text: string) => {
 
 const navigateToAddCategory = () => {
   router.push({ name: 'add', query: { focus: 'category' } })
+}
+
+const navigateToEditCategory = () => {
+  if(selectedCategory.value){
+    router.push({ name: 'edit', query: { category: selectedCategory.value }});
+  }
 }
 </script>
 
@@ -41,6 +47,14 @@ const navigateToAddCategory = () => {
         class="p-1 rounded cursor-pointer hover:bg-gray-200 hover:text-gray-700"
       >
         <PlusIcon class="w-5 h-5 text-gray-500"/>
+      </span>
+
+      <span
+        v-if="selectedCategory"
+        @click="navigateToEditCategory"
+        class="p-1 rounded cursor-pointer hover:bg-gray-200 hover:text-gray-700"
+      >
+        <PencilIcon class="w-5 h-5 text-gray-500" />
       </span>
     </div>
     <ItemTree
