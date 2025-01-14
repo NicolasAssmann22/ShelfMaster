@@ -179,7 +179,7 @@ const selectedCategory = route.query.category
 const category = ref<Category | null>(null)
 
 const isItem = computed(() => node.value && 'quantity' in node.value)
-const isStorage = computed(() => node.value && 'description' in node.value)
+const isStorage = computed(() => node.value && 'children' in node.value)
 const isCategory = computed(() => category.value !== null)
 
 let previousName: string | undefined = undefined
