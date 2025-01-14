@@ -186,6 +186,18 @@
           placeholder="Enter category name"
         >
       </div>
+
+      <FieldLabel id="description" ref="descriptionField">
+        <template #label>Description:</template>
+        <template #input>
+          <textarea
+            v-model="category.description"
+            id="description"
+            class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter description"
+          ></textarea>
+        </template>
+      </FieldLabel>
     </div>
 
     <!-- Submit button -->
