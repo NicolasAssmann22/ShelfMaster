@@ -311,7 +311,10 @@ const handleAdd = () => {
     }
 
     // Create new storage of category
-    const newCategory = createCategory(category.value)
+    const newCategory = createCategory({
+      name: category.value.name,
+      description: category.value.description
+    })
 
     // Add storage to store
     // storageStore.addCategory(newCategory);
