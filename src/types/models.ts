@@ -1,8 +1,16 @@
-import CryptoJS from 'crypto-js'; // Library for cryptographic operations
+import CryptoJS from 'crypto-js';
+import { data } from 'autoprefixer' // Library for cryptographic operations
 
 // Default icons for storage and items
 const STORAGE_DEFAULT_ICON = 'FolderIcon';
 const ITEM_DEFAULT_ICON = 'WrenchIcon';
+
+// Interface for categories
+export interface Category {
+  id: string; // Unique identifier for the category
+  name: string; // Name of the category
+  description: string; // Optional desciption of the category
+}
 
 // Base interface for tree nodes
 export interface Node {
@@ -69,6 +77,19 @@ export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): S
     items: data.items ?? [], // Default to an empty list of items
     children: data.children ?? [], // Default to no child storages
     description: data.description, // Optional description field
+  };
+}
+
+// Function to create a new category with validation and defaults
+export function createCategory(data: Partial<Category> & Pick<Category, 'name'>): Category{
+  if (!data.name) {
+    throw new Error('Category name is required');
+  }
+
+  return {
+    id: data.id ?? generateId(data.name), // Generate or use provided ID
+    name: data.name, // Mandatory field
+    description: data.description + '', // Optional description field
   };
 }
 

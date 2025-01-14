@@ -22,13 +22,8 @@ const handleSearch = (text: string) => {
 }
 
 const navigateToAddCategory = () => {
-  router.push({ name: 'add', query: { id: selectedCategory.value } })
+  router.push({ name: 'add', query: { focus: 'category' } })
 }
-
-// watch(selectedCategory, (newCategory) => {
-//   // Logik wie nach Kategorie gefiltert wird
-// });
-
 </script>
 
 <template>
