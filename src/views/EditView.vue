@@ -1,7 +1,7 @@
 <template>
   <BackButton />
   <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-    <h1 class="text-2xl font-bold mb-6">Edit {{ isItem ? 'Item' : 'Storage' }}</h1>
+    <h1 class="text-2xl font-bold mb-6">Edit {{ isItem ? 'Item' : isStorage ? 'Storage' : 'Category' }}</h1>
     <div v-if="node">
       <form @submit.prevent="handleFormSubmit" class="space-y-6">
         <FieldLabel id="name" ref="nameField">
@@ -65,7 +65,7 @@
           </FieldLabel>
         </div>
 
-        <div v-if="!isItem">
+        <div v-if="isStorage">
           <FieldLabel id="description" ref="descriptionField">
             <template #label>Description:</template>
             <template #input>
@@ -97,24 +97,61 @@
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
-        >
-          Save
-        </button>
-        <button
-          type="button"
-          @click="handleDelete"
-          class="w-full bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300"
-        >
-          Delete
-        </button>
       </form>
+    </div>
+
+<!--   TODO Load Category-->
+    <div v-if="selectedCategory" class="edit-category-form">
+      <FieldLabel id="name" ref="nameField">
+        <template #label>
+            <span :class="{ 'text-blue-500': isNameModified, 'text-gray-700': !isNameModified }">
+              Name:
+            </span>
+        </template>
+        <template #input>
+          <input
+            type="text"
+            id="name"
+            v-model="selectedCategory"
+            :class="{ 'required': !category?.name }"
+            class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter name"
+          />
+        </template>
+      </FieldLabel>
+
+<!--      <FieldLabel id="description" ref="descriptionField">-->
+<!--        <template #label>Description:</template>-->
+<!--        <template #input>-->
+<!--              <textarea-->
+<!--                v-model="category.description"-->
+<!--                id="description"-->
+<!--                class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"-->
+<!--                placeholder="Enter description"-->
+<!--              ></textarea>-->
+<!--        </template>-->
+<!--      </FieldLabel>-->
     </div>
 
     <div v-else class="text-center text-gray-500">
       <p>Loading...</p>
+    </div>
+
+    <div class="flex items-center gap-4 mt-4">
+      <button
+        type="button"
+        @click="handleDelete"
+        class="w-full bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300"
+      >
+        Delete
+      </button>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+      >
+        Save
+      </button>
     </div>
   </div>
 </template>
@@ -122,7 +159,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { Storage, Item, Node } from '../types/models'
+import type { Storage, Item, Node, Category } from '../types/models'
 import { useStorageStore } from '../composables/useStorage'
 import { useIconsStore } from '../composables/iconsStore'
 import * as OutlineIcons from '@heroicons/vue/24/outline'
@@ -138,6 +175,12 @@ const iconOptions = iconsStore.iconOptions
 
 const nodeId = route.query.id
 const node = ref<Node | null>(null)
+const selectedCategory = route.query.category
+const category = ref<Category | null>(null)
+
+const isItem = computed(() => node.value && 'quantity' in node.value)
+const isStorage = computed(() => node.value && 'description' in node.value)
+const isCategory = computed(() => category.value !== null)
 
 let previousName: string | undefined = undefined
 
@@ -150,18 +193,31 @@ onMounted(() => {
     }
     previousName = node.value?.name
   }
+
+  if(selectedCategory){
+    category.value = JSON.parse(selectedCategory as string) as Category | null
+    if(!category.value){
+      alert('Category not found')
+      router.push('/')
+    }
+    previousName = category.value?.name
+  }
 })
 
-const isItem = computed(() => node.value && 'quantity' in node.value)
 
 const handleFormSubmit = () => {
-  if (node.value) {
+  if(isCategory.value && category.value){
+    // TODO Handle category save
+  } else if (node.value) {
     store.updateNode(node.value as Storage)
     router.push('/')
   }
 }
 
 const handleDelete = () => {
+  if(isCategory.value && category.value){
+    // TODO Hanlde category delete
+  }
   if (node.value) {
     store.deleteNode(node.value.id)
     router.push('/') // Navigate back to the main page after deletion
@@ -170,7 +226,12 @@ const handleDelete = () => {
   }
 }
 
-const isNameModified = computed(() => node.value?.name !== previousName)
+const isNameModified = computed(() => {
+  if(isCategory.value && category.value){
+    return category.value?.name !== previousName
+  }
+  return node.value?.name !== previousName
+})
 
 const getIconComponent = (iconName: string) => {
   return OutlineIcons[iconName as keyof typeof OutlineIcons]
