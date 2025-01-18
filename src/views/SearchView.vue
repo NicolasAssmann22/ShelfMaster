@@ -1,21 +1,32 @@
 <script setup lang="ts">
-import SearchBar from '../components/search/SearchBar.vue';
-import ItemTree from '../components/search/ItemTree.vue';
-import { ref } from 'vue'
+import SearchBar from '../components/search/SearchBar.vue'
+import ItemTree from '../components/search/ItemTree.vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { PlusIcon, PencilIcon } from '@heroicons/vue/24/outline'
+import { useCategoryStore } from '../composables/categoryStorage'
 
-const categories = ref([
-  { value: '', label: 'All Categories' },
-  { value: 'cutley', label: 'cutley' },
-  { value: 'toiletries', label: 'toiletries' },
-  { value: 'linen', label: 'linen' },
-  // Weitere Kategorien hier hinzufügen
-]);
+const categoryStore = useCategoryStore()
 
-const searchText = ref('');
-const selectedCategory = ref('');
-const router = useRouter();
+onMounted(() => {
+  categoryStore.loadCategoriesData()
+  console.log('Categories updated:', categoryStore.categories)
+})
+
+const categories = computed(() => categoryStore.categories)
+
+watch(
+  () => categoryStore.categories,
+  (newCategories) => {
+    if (newCategories.length) {
+      console.log('Categories loaded:', newCategories)
+    }
+  },
+)
+
+const searchText = ref('')
+const selectedCategory = ref('')
+const router = useRouter()
 
 const handleSearch = (text: string) => {
   searchText.value = text
@@ -26,27 +37,28 @@ const navigateToAddCategory = () => {
 }
 
 const navigateToEditCategory = () => {
-  if(selectedCategory.value){
-    router.push({ name: 'edit', query: { category: selectedCategory.value }});
+  if (selectedCategory.value) {
+    router.push({ name: 'edit', query: { category: selectedCategory.value } })
   }
 }
 </script>
 
 <template>
   <div class="search-view">
-    <SearchBar @search="handleSearch"/>
+    <SearchBar @search="handleSearch" />
     <div class="category-dropdown flex items-center gap-2">
       <select v-model="selectedCategory" class="category-dropdown-select">
-        <option v-for="category in categories" :key="category.value" :value="category.value">
-          {{ category.label }}
-        </option>/
+        <option v-for="category in categories" :key="category.id" :value="category.id">
+          {{ category.name }}
+        </option>
+        /
       </select>
 
       <span
         @click="navigateToAddCategory"
         class="p-1 rounded cursor-pointer hover:bg-gray-200 hover:text-gray-700"
       >
-        <PlusIcon class="w-5 h-5 text-gray-500"/>
+        <PlusIcon class="w-5 h-5 text-gray-500" />
       </span>
 
       <span
@@ -57,10 +69,7 @@ const navigateToEditCategory = () => {
         <PencilIcon class="w-5 h-5 text-gray-500" />
       </span>
     </div>
-    <ItemTree
-      :searchText="searchText"
-      :selectedCategory="selectedCategory"
-    />
+    <ItemTree :searchText="searchText" :selectedCategory="selectedCategory" />
   </div>
 </template>
 

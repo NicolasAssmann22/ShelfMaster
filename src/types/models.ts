@@ -1,30 +1,30 @@
-import CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js'
 import { data } from 'autoprefixer' // Library for cryptographic operations
 
 // Default icons for storage and items
-const STORAGE_DEFAULT_ICON = 'FolderIcon';
-const ITEM_DEFAULT_ICON = 'WrenchIcon';
+const STORAGE_DEFAULT_ICON = 'FolderIcon'
+const ITEM_DEFAULT_ICON = 'WrenchIcon'
 
 // Interface for categories
 export interface Category {
-  id: string; // Unique identifier for the category
-  name: string; // Name of the category
-  description: string; // Optional desciption of the category
+  id: string // Unique identifier for the category
+  name: string // Name of the category
+  description: string // Optional desciption of the category
 }
 
 // Base interface for tree nodes
 export interface Node {
-  id: string; // Unique identifier for the node
-  parentId: string | undefined; // ID of the parent node (if any)
-  name: string; // Name of the node
-  icon: string; // Icon representing the node
+  id: string // Unique identifier for the node
+  parentId: string | undefined // ID of the parent node (if any)
+  name: string // Name of the node
+  icon: string // Icon representing the node
 }
 
 // Interface for items within storage
 export interface Item extends Node {
-  category?: string; // Category of the item
-  quantity: number; // Quantity of the item
-  status: ItemStatus; // Status of the item (Available or Lent)
+  categoryId: string // Category of the item
+  quantity: number // Quantity of the item
+  status: ItemStatus // Status of the item (Available or Lent)
 }
 
 // Enum for item statuses
@@ -35,15 +35,15 @@ export enum ItemStatus {
 
 // Interface for storage that can hold items and other storage
 export interface Storage extends Node {
-  items: Item[]; // Items stored in this storage
-  children: Storage[]; // Child storages under this storage
-  description?: string; // Description of the storage
+  items: Item[] // Items stored in this storage
+  children: Storage[] // Child storages under this storage
+  description?: string // Description of the storage
 }
 
 // Function to create a new item with validation and defaults
 export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
   if (!data.name) {
-    throw new Error('Item name is required'); // Ensure the name is provided
+    throw new Error('Item name is required') // Ensure the name is provided
   }
 
   return {
@@ -54,19 +54,21 @@ export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
     quantity: data.quantity ?? 1, // Default quantity is 1
     status: data.status ?? ItemStatus.Available, // Default status is Available
     icon: data.icon ?? ITEM_DEFAULT_ICON, // Default icon for items
-  };
+  }
 }
 
 // Function to generate a unique ID based on name and timestamp
 function generateId(name: string): string {
-  const timestamp = Date.now().toString(); // Current timestamp
-  return CryptoJS.SHA256(name + timestamp).toString(CryptoJS.enc.Hex).toString(0, 8); // Hash the name with timestamp
+  const timestamp = Date.now().toString() // Current timestamp
+  return CryptoJS.SHA256(name + timestamp)
+    .toString(CryptoJS.enc.Hex)
+    .toString(0, 8) // Hash the name with timestamp
 }
 
 // Function to create a new storage with validation and defaults
 export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): Storage {
   if (!data.name) {
-    throw new Error('Storage name is required'); // Ensure the name is provided
+    throw new Error('Storage name is required') // Ensure the name is provided
   }
 
   return {
@@ -77,28 +79,28 @@ export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): S
     items: data.items ?? [], // Default to an empty list of items
     children: data.children ?? [], // Default to no child storages
     description: data.description, // Optional description field
-  };
+  }
 }
 
 // Function to create a new category with validation and defaults
-export function createCategory(data: Partial<Category> & Pick<Category, 'name'>): Category{
+export function createCategory(data: Partial<Category> & Pick<Category, 'name'>): Category {
   if (!data.name) {
-    throw new Error('Category name is required');
+    throw new Error('Category name is required')
   }
 
   return {
     id: data.id ?? generateId(data.name), // Generate or use provided ID
     name: data.name, // Mandatory field
     description: data.description + '', // Optional description field
-  };
+  }
 }
 
 // Function to retrieve the default icon for a given node
 export function getDefaultIcon(node: Node): string {
   if ('items' in node) {
-    return STORAGE_DEFAULT_ICON; // Return storage default icon for storage nodes
+    return STORAGE_DEFAULT_ICON // Return storage default icon for storage nodes
   } else if ('quantity' in node) {
-    return ITEM_DEFAULT_ICON; // Return item default icon for item nodes
+    return ITEM_DEFAULT_ICON // Return item default icon for item nodes
   }
-  throw Error('Unknown node type'); // Error if the node type is unrecognized
+  throw Error('Unknown node type') // Error if the node type is unrecognized
 }

@@ -75,9 +75,10 @@
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Select a category</option>
-          <option value="electronics">Electronics</option>
-          <option value="furniture">Furniture</option>
-          <option value="clothing">Clothing</option>
+          <!-- Dynamically populate categories from categoryStore -->
+          <option v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </option>
         </select>
       </div>
 
@@ -184,7 +185,7 @@
           :class="{ required: !category.name }"
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500"
           placeholder="Enter category name"
-        >
+        />
       </div>
 
       <FieldLabel id="description" ref="descriptionField">
@@ -217,14 +218,14 @@ import * as OutlineIcons from '@heroicons/vue/24/outline'
 import { useRoute, useRouter } from 'vue-router'
 import { useStorageStore } from '../composables/useStorage'
 import { useIconsStore } from '../composables/iconsStore'
+import { useCategoryStore } from '../composables/categoryStorage'
 import {
   createItem,
   createStorage,
-  createCategory,
   type Item,
   type Storage,
   ItemStatus,
-  type Category
+  type Category,
 } from '../types/models'
 import { onMounted, computed, ref, nextTick } from 'vue'
 import FieldLabel from '../components/fields/FieldLabel.vue'
@@ -267,6 +268,10 @@ const path = computed(() => {
 const iconsStore = useIconsStore()
 const iconOptions = iconsStore.iconOptions
 
+const categoryStore = useCategoryStore()
+
+const categories = computed(() => categoryStore.categories)
+
 // Function to dynamically get the selected icon component
 const getIconComponent = (iconName: string) => {
   return OutlineIcons[iconName as keyof typeof OutlineIcons]
@@ -293,6 +298,7 @@ onMounted(() => {
       if (categorySelected) categorySelected.focus()
     })
   } else setFocus()
+  categoryStore.loadCategoriesData()
 })
 
 // Handle the "Add" button click
@@ -304,25 +310,16 @@ const handleAdd = () => {
     return
   }
 
-  if(selectedOption.value === 'category') {
-    if(!category.value.name){
+  if (selectedOption.value === 'category') {
+    if (!category.value.name) {
       alert('Category name is required.')
       return
     }
 
-    // Create new storage of category
-    const newCategory = createCategory({
-      name: category.value.name,
-      description: category.value.description
-    })
-
-    // Add storage to store
-    // storageStore.addCategory(newCategory);
-
-    // TODO Add Category to the store
+    categoryStore.addCategory(category.value.name)
 
     router.push({ name: 'home' }) // Navigate back to home
-  }else if (selectedOption.value === 'storage') {
+  } else if (selectedOption.value === 'storage') {
     if (!storage.value.name) {
       alert('Storage name is required.')
       return
