@@ -29,19 +29,6 @@
         ></span>
         <span class="text-gray-700 font-medium">Storage</span>
       </label>
-      <label class="flex items-center space-x-2">
-        <input
-          type="radio"
-          v-model="selectedOption"
-          value="category"
-          id="category-radio"
-          class="hidden peer"
-        />
-        <span
-          class="w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-purple-500 peer-checked:border-transparent cursor-pointer"
-        ></span>
-        <span class="text-gray-700 font-medium">Category</span>
-      </label>
     </div>
 
     <!-- Display the path -->
@@ -173,34 +160,6 @@
       </div>
     </div>
 
-    <!-- Category Selected -->
-    <div v-if="selectedOption === 'category'" class="space-y-6">
-      <div>
-        <label for="name" class="block text-gray-700">Name:</label>
-        <input
-          type="text"
-          id="name"
-          v-model="category.name"
-          ref="categoryNameInput"
-          :class="{ required: !category.name }"
-          class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-          placeholder="Enter category name"
-        />
-      </div>
-
-      <FieldLabel id="description" ref="descriptionField">
-        <template #label>Description:</template>
-        <template #input>
-          <textarea
-            v-model="category.description"
-            id="description"
-            class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter description"
-          ></textarea>
-        </template>
-      </FieldLabel>
-    </div>
-
     <!-- Submit button -->
     <div class="mt-6">
       <button
@@ -231,7 +190,7 @@ import { onMounted, computed, ref, nextTick } from 'vue'
 import FieldLabel from '../components/fields/FieldLabel.vue'
 import BackButton from '../components/ui/BackButton.vue'
 
-// Radio button option (either 'item' or 'storage' or 'category')
+// Radio button option (either 'item' or 'storage')
 const selectedOption = ref<string>('item')
 
 const itemNameInput = ref<HTMLInputElement | null>(null)
@@ -251,12 +210,6 @@ const storage = ref<Partial<Storage>>({
   name: '',
   description: '',
   icon: 'FolderIcon', // Default icon for storage
-})
-
-// Category fields
-const category = ref<Partial<Category>>({
-  name: '',
-  description: '',
 })
 
 const path = computed(() => {
@@ -290,36 +243,19 @@ const setFocus = () => {
 }
 
 onMounted(() => {
-  const focusQuery = route.query.focus
-  if (focusQuery === 'category') {
-    selectedOption.value = 'category'
-    nextTick(() => {
-      const categorySelected = document.getElementById('category')
-      if (categorySelected) categorySelected.focus()
-    })
-  } else setFocus()
-  categoryStore.loadCategoriesData()
+  setFocus()
 })
 
 // Handle the "Add" button click
 const handleAdd = () => {
   const parentId = route.query.id as string | null
 
-  if (!parentId && selectedOption.value !== 'category') {
+  if (!parentId) {
     alert('Parent ID is required.')
     return
   }
 
-  if (selectedOption.value === 'category') {
-    if (!category.value.name) {
-      alert('Category name is required.')
-      return
-    }
-
-    categoryStore.addCategory(category.value.name)
-
-    router.push({ name: 'home' }) // Navigate back to home
-  } else if (selectedOption.value === 'storage') {
+  if (selectedOption.value === 'storage') {
     if (!storage.value.name) {
       alert('Storage name is required.')
       return

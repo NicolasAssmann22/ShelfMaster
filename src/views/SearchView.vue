@@ -33,7 +33,7 @@ const handleSearch = (text: string) => {
 }
 
 const navigateToAddCategory = () => {
-  router.push({ name: 'add', query: { focus: 'category' } })
+  router.push({ name: 'add-category' })
 }
 
 const navigateToEditCategory = () => {

@@ -34,12 +34,13 @@ export const useCategoryStore = defineStore('category', {
 
     /**
      * Add a new category.
-     * @param name The name of the new category.
+     * @param category
      */
-    addCategory(name: string) {
+    addCategory(category: { name: string, description?: string }) {
       const newCategory: Category = {
         id: `${Date.now()}`, // Generate a unique ID based on the timestamp
-        name,
+        name: category.name,
+        description: category.description || '',
       }
       this.categories.push(newCategory)
 

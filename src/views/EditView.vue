@@ -174,9 +174,11 @@ onMounted(() => {
     previousName = category.value?.name
   }
 
-  console.log(node.value.categoryId)
-  if (!node.value?.categoryId) {
-    node.value.categoryId = '1'
+  if(node.value){
+    console.log(node.value.categoryId)
+    if (!node.value.categoryId) {
+      node.value.categoryId = '1'
+    }
   }
 
   categoryStore.loadCategoriesData()
