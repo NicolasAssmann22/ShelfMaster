@@ -32,14 +32,6 @@ export const useCategoryStore = defineStore('category', {
       }
     },
 
-    //   /**
-    //    * Get all categories.
-    //    * @returns The array of categories.
-    //    */
-    // getCategories(): Category[] {
-    //   return this.categories
-    // },
-
     /**
      * Add a new category.
      * @param category

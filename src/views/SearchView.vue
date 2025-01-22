@@ -38,7 +38,7 @@ const navigateToAddCategory = () => {
 
 const navigateToEditCategory = () => {
   if (selectedCategory.value) {
-    router.push({ name: 'edit-category' })
+    router.push({ name: 'edit-category', query: { id: selectedCategory.value} })
   }
 }
 </script>
