@@ -2,7 +2,7 @@
   <BackButton />
   <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
     <h1 class="text-2xl font-bold mb-6">
-      Edit {{ isItem ? 'Item' : isStorage ? 'Storage' : 'Category' }}
+      Edit {{ isItem ? 'Item' : 'Storage' }}
     </h1>
     <div v-if="node">
       <form @submit.prevent="handleFormSubmit" class="space-y-6">
@@ -127,7 +127,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { Storage, Item, Node, Category } from '../types/models'
+import type { Storage, Item, Node } from '../types/models'
 import { useStorageStore } from '../composables/useStorage'
 import { useIconsStore } from '../composables/iconsStore'
 import * as OutlineIcons from '@heroicons/vue/24/outline'
@@ -146,12 +146,9 @@ const allCategories = computed(() => categoryStore.categories)
 
 const nodeId = route.query.id
 const node = ref<Node | null>(null)
-const selectedCategory = route.query.category
-const category = ref<Category | null>(null)
 
 const isItem = computed(() => node.value && 'quantity' in node.value)
 const isStorage = computed(() => node.value && 'children' in node.value)
-const isCategory = computed(() => category.value !== null)
 
 let previousName: string | undefined = undefined
 
@@ -163,15 +160,6 @@ onMounted(() => {
       router.push('/')
     }
     previousName = node.value?.name
-  }
-
-  if (selectedCategory) {
-    category.value = JSON.parse(selectedCategory as string) as Category | null
-    if (!category.value) {
-      alert('Category not found')
-      router.push('/')
-    }
-    previousName = category.value?.name
   }
 
   if(node.value){
@@ -201,9 +189,6 @@ const handleDelete = () => {
 }
 
 const isNameModified = computed(() => {
-  if (isCategory.value && category.value) {
-    return category.value?.name !== previousName
-  }
   return node.value?.name !== previousName
 })
 
