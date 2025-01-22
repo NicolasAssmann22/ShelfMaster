@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SearchView from '../views/SearchView.vue'
 import EditView from '../views/EditView.vue'
 import AddCategoryView from '../views/AddCategoryView.vue'
+import EditCategoryView from '../views/EditCategoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,11 @@ const router = createRouter({
       path: '/add-category',
       name: 'add-category',
       component: AddCategoryView,
+    },
+    {
+      path: '/edit-category',
+      name: 'edit-category',
+      component: EditCategoryView,
     },
   ],
 })

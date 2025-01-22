@@ -38,7 +38,7 @@ const navigateToAddCategory = () => {
 
 const navigateToEditCategory = () => {
   if (selectedCategory.value) {
-    router.push({ name: 'edit', query: { category: selectedCategory.value } })
+    router.push({ name: 'edit-category' })
   }
 }
 </script>
@@ -48,6 +48,7 @@ const navigateToEditCategory = () => {
     <SearchBar @search="handleSearch" />
     <div class="category-dropdown flex items-center gap-2">
       <select v-model="selectedCategory" class="category-dropdown-select">
+        <option value="">All Categories</option>
         <option v-for="category in categories" :key="category.id" :value="category.id">
           {{ category.name }}
         </option>

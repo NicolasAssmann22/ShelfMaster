@@ -32,6 +32,14 @@ export const useCategoryStore = defineStore('category', {
       }
     },
 
+    //   /**
+    //    * Get all categories.
+    //    * @returns The array of categories.
+    //    */
+    // getCategories(): Category[] {
+    //   return this.categories
+    // },
+
     /**
      * Add a new category.
      * @param category
@@ -48,6 +56,16 @@ export const useCategoryStore = defineStore('category', {
       saveToLocalStorage(this.categories)
     },
 
+      /**
+       * Find a category by its ID.
+       * @param categoryId The ID of the category to find.
+       * @returns The category object, or null if not found.
+       */
+    findCategoryById(categoryId: string): Category | null {
+      const category = this.categories.find((category) => category.id === categoryId)
+      return category || null
+    },
+
     /**
      * Remove a category by its ID.
      * @param categoryId The ID of the category to remove.
@@ -60,6 +78,20 @@ export const useCategoryStore = defineStore('category', {
         saveToLocalStorage(this.categories)
       } else {
         throw new Error(`Category with id ${categoryId} not found.`)
+      }
+    },
+
+      /**
+       * Update an existing category.
+       * @param updatedCategory The category data to update.
+       */
+    updateCategory(updatedCategory: Category){
+      const index = this.categories.findIndex((category) => category.id === updatedCategory.id)
+      if(index !== -1){
+        this.categories[index] = updatedCategory
+        saveToLocalStorage(this.categories)
+      }else{
+        throw new Error(`Category with id ${updatedCategory.id} not found.`)
       }
     },
   },
