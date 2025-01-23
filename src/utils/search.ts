@@ -45,11 +45,22 @@ export const searchNodesByName = (searchText: string, storages: Storage[]): Sear
 
 /**
  * Search for items in the storage tree that match the given category.
- * @param category The category to search for.
+ * @param categoryId The category to search for.
  * @param storages The storage tree to search in.
  * @returns An array of matching items.
  */
-export const searchItemsByCategory = (category: string, storages: Storage[]): SearchResult[] => {
-  return searchRecursively(storages, (node) => 'category' in node && node.category === category);
+export const searchItemsByCategory = (categoryId: string, storages: Storage[]): SearchResult[] => {
+  return searchRecursively(storages, (node) => 'categoryId' in node && node.categoryId === categoryId);
 };
 
+export const filterTreeByCategory = (categoryId: string, storages: Storage[]): Storage[] => {
+  const filterRecursively = (storage: Storage): boolean => {
+    const items = searchItemsByCategory(categoryId, [storage]);
+    if (items.length > 0) {
+      return true;
+    }
+    return storage.children.some(filterRecursively);
+  };
+
+  return storages.filter(filterRecursively);
+};

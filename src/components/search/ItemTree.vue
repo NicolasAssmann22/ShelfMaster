@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import type TreeComponent from '../ui/TreeComponent.vue'
 import Tree from '../ui/TreeComponent.vue'
 import type { Node } from '../../types/models'
-import { mapStoragesToTreeNodes, findTreeNodeById } from '../../utils/treeMapper'
+import { findTreeNodeById, mapStoragesToTreeNodes } from '../../utils/treeMapper'
 import { useStorageStore } from '../../composables/useStorage'
-import { type SearchResult, searchNodesByName } from '../../utils/search'
+import { filterTreeByCategory, searchNodesByName, searchItemsByCategory, type SearchResult } from '../../utils/search'
 import type { TreeNodeData } from '../../types/tree'
-import type TreeComponent from '../ui/TreeComponent.vue'
-import { onMounted } from 'vue'
 import { useCategoryStore } from '../../composables/categoryStorage'
 
 /**
@@ -27,15 +26,21 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  categoryId: {
+    type: String,
+    default: '',
+  },
   dnd: {
     type: Boolean,
     default: false,
   },
 })
 
-const treeData = computed(() => {
+const treeData = ref(storageStore.storage)
+
+const displayTreeData = computed(() => {
   saveExpandedState()
-  const newData = mapStoragesToTreeNodes(storageStore.storage)
+  const newData = mapStoragesToTreeNodes(treeData.value)
   restoreExpandedState(newData)
   return newData
 })
@@ -43,6 +48,61 @@ const treeData = computed(() => {
 const treeRef = ref<InstanceType<typeof TreeComponent> | null>(null)
 const expandedState = ref<Record<string, boolean>>({})
 const draggedNode = ref<TreeNodeData | null>(null)
+
+watch(
+  () => props.searchText,
+  (searchText) => {
+    handleSearch(searchText)
+  },
+)
+
+const handleSearch = (searchText: string) => {
+  const nameResults: SearchResult[] = searchNodesByName(searchText, storageStore.storage)
+  const categoryResults: SearchResult[] = searchItemsByCategory(searchText, storageStore.storage)
+
+  if (nameResults.length === 0 && categoryResults.length === 0) {
+    return
+  }
+
+  const results = nameResults.concat(categoryResults)
+
+  treeRef.value!.collapseAllNodes()
+  treeRef.value!.resetHighlighting()
+
+  results.forEach((result) => {
+    expandNodesAlongPath(result.path)
+    result.path.forEach((node: Node) => {
+      const treeNode = findTreeNodeById(node.id)
+      if (treeNode) {
+        treeRef.value!.highlightNode(treeNode)
+      }
+    })
+  })
+}
+
+watch(
+  () => props.categoryId,
+  (categoryId) => {
+    handleFilter(categoryId)
+  },
+)
+
+const handleFilter = (categoryId: string) => {
+  if (!categoryId || categoryId === '') {
+    resetFilter()
+  } else {
+    filterByCategory(categoryId)
+  }
+}
+
+const filterByCategory = (categoryId: string) => {
+  if (!displayTreeData.value) return
+  treeData.value = filterTreeByCategory(categoryId, storageStore.storage)
+}
+
+const resetFilter = () => {
+  treeData.value = storageStore.storage
+}
 
 const resetHighlighting = () => {
   if (!treeData.value) return
@@ -56,7 +116,7 @@ const resetHighlighting = () => {
     })
   }
 
-  resetHighlightingRecursive(treeData.value)
+  resetHighlightingRecursive(displayTreeData.value)
 }
 
 const expandNodesAlongPath = (path: Node[]) => {
@@ -76,11 +136,11 @@ const expandNodesAlongPath = (path: Node[]) => {
     })
   }
 
-  expandPathRecursively(treeData.value, path)
+  expandPathRecursively(displayTreeData.value, path)
 }
 
 const saveExpandedState = () => {
-  if (!treeData.value) return
+  if (!displayTreeData.value) return
 
   const saveExpandedStateRecursive = (nodes: TreeNodeData[]) => {
     nodes.forEach((node) => {
@@ -90,7 +150,7 @@ const saveExpandedState = () => {
       }
     })
   }
-  saveExpandedStateRecursive(treeData.value)
+  saveExpandedStateRecursive(displayTreeData.value)
 }
 
 const restoreExpandedState = (nodes: TreeNodeData[]) => {
@@ -126,33 +186,6 @@ const onDragEnd = () => {
   resetHighlighting()
 }
 
-watch(
-  () => props.searchText,
-  (newText) => {
-    const results: SearchResult[] = searchNodesByName(newText, storageStore.storage)
-
-    if (results.length === 0) {
-      return
-    }
-
-    console.log(storageStore.storage)
-    console.log(results)
-
-    treeRef.value!.collapseAllNodes()
-    treeRef.value!.resetHighlighting()
-
-    results.forEach((result) => {
-      expandNodesAlongPath(result.path)
-      result.path.forEach((node: Node) => {
-        const treeNode = findTreeNodeById(node.id)
-        if (treeNode) {
-          treeRef.value!.highlightNode(treeNode)
-        }
-      })
-    })
-  },
-)
-
 const handleNodeDrop = (draggedNode: TreeNodeData, targetNode: TreeNodeData) => {
   if (!props.dnd || !draggedNode) {
     return
@@ -165,7 +198,7 @@ const handleNodeDrop = (draggedNode: TreeNodeData, targetNode: TreeNodeData) => 
 
 <template>
   <Tree
-    :nodes="treeData"
+    :nodes="displayTreeData"
     :dnd="props.dnd"
     ref="treeRef"
     @dragstart="onDragStart"
