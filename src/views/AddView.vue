@@ -58,7 +58,7 @@
         <label for="category" class="block text-gray-700">Category:</label>
         <select
           id="category"
-          v-model="item.category"
+          v-model="item.categoryId"
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Select a category</option>
@@ -178,15 +178,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStorageStore } from '../composables/useStorage'
 import { useIconsStore } from '../composables/iconsStore'
 import { useCategoryStore } from '../composables/categoryStorage'
-import {
-  createItem,
-  createStorage,
-  type Item,
-  type Storage,
-  ItemStatus,
-  type Category,
-} from '../types/models'
-import { onMounted, computed, ref, nextTick } from 'vue'
+import { createItem, createStorage, type Item, type Storage, ItemStatus } from '../types/models'
+import { onMounted, computed, ref } from 'vue'
 import FieldLabel from '../components/fields/FieldLabel.vue'
 import BackButton from '../components/ui/BackButton.vue'
 
@@ -199,7 +192,7 @@ const storageNameInput = ref<HTMLInputElement | null>(null)
 // Item fields
 const item = ref<Partial<Item>>({
   name: '',
-  category: '',
+  categoryId: '',
   quantity: 1,
   status: ItemStatus.Available,
   icon: 'WrenchIcon', // Default icon for item
@@ -280,7 +273,7 @@ const handleAdd = () => {
     // Create a new item with the selected icon
     const newItem = createItem({
       name: item.value.name,
-      category: item.value.category,
+      categoryId: item.value.categoryId,
       quantity: item.value.quantity,
       status: item.value.status,
       icon: item.value.icon, // Include selected icon

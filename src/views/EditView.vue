@@ -1,9 +1,7 @@
 <template>
   <BackButton />
   <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-    <h1 class="text-2xl font-bold mb-6">
-      Edit {{ isItem ? 'Item' : 'Storage' }}
-    </h1>
+    <h1 class="text-2xl font-bold mb-6">Edit {{ isItem ? 'Item' : 'Storage' }}</h1>
     <div v-if="node">
       <form @submit.prevent="handleFormSubmit" class="space-y-6">
         <FieldLabel id="name" ref="nameField">
@@ -29,7 +27,7 @@
             <template #label>Category:</template>
             <template #input>
               <select
-                v-model="node.categoryId"
+                v-model="(node as Item).categoryId"
                 id="category"
                 class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -160,13 +158,6 @@ onMounted(() => {
       router.push('/')
     }
     previousName = node.value?.name
-  }
-
-  if(node.value){
-    console.log(node.value.categoryId)
-    if (!node.value.categoryId) {
-      node.value.categoryId = '1'
-    }
   }
 
   categoryStore.loadCategoriesData()

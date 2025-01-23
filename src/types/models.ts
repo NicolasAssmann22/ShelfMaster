@@ -1,5 +1,4 @@
 import CryptoJS from 'crypto-js'
-import { data } from 'autoprefixer' // Library for cryptographic operations
 
 // Default icons for storage and items
 const STORAGE_DEFAULT_ICON = 'FolderIcon'
@@ -9,7 +8,7 @@ const ITEM_DEFAULT_ICON = 'WrenchIcon'
 export interface Category {
   id: string // Unique identifier for the category
   name: string // Name of the category
-  description: string // Optional desciption of the category
+  description?: string // Optional desciption of the category
 }
 
 // Base interface for tree nodes
@@ -50,7 +49,7 @@ export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
     id: data.id ?? generateId(data.name), // Generate or use provided ID
     parentId: data.parentId, // Parent ID if provided
     name: data.name, // Mandatory field
-    category: data.category?.toLowerCase().trim() ?? undefined, // Normalize category
+    categoryId: data.categoryId ?? '',
     quantity: data.quantity ?? 1, // Default quantity is 1
     status: data.status ?? ItemStatus.Available, // Default status is Available
     icon: data.icon ?? ITEM_DEFAULT_ICON, // Default icon for items
