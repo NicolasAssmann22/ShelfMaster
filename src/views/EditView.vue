@@ -1,7 +1,9 @@
 <template>
   <BackButton />
   <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-    <h1 class="text-2xl font-bold mb-6">Edit {{ isItem ? 'Item' : 'Storage' }}</h1>
+    <h1 class="text-2xl font-bold mb-6">
+      Edit {{ isItem ? 'Item' : 'Storage' }}
+    </h1>
     <div v-if="node">
       <form @submit.prevent="handleFormSubmit" class="space-y-6">
         <FieldLabel id="name" ref="nameField">
@@ -15,7 +17,7 @@
               type="text"
               v-model="node.name"
               id="name"
-              :class="{ 'required': !node.name }"
+              :class="{ required: !node.name }"
               class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter name"
             />
@@ -26,13 +28,16 @@
           <FieldLabel id="category" ref="categoryField">
             <template #label>Category:</template>
             <template #input>
-              <input
-                type="text"
-                v-model="(node as Item).category"
+              <select
+                v-model="node.categoryId"
                 id="category"
                 class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter category"
-              />
+              >
+                <option value="" disabled>Select a category</option>
+                <option v-for="cat in allCategories" :key="cat.id" :value="cat.id">
+                  {{ cat.name }}
+                </option>
+              </select>
             </template>
           </FieldLabel>
 
@@ -65,7 +70,7 @@
           </FieldLabel>
         </div>
 
-        <div v-if="!isItem">
+        <div v-if="isStorage">
           <FieldLabel id="description" ref="descriptionField">
             <template #label>Description:</template>
             <template #input>
@@ -96,25 +101,25 @@
             </div>
           </div>
         </div>
-
-        <button
-          type="submit"
-          class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
-        >
-          Save
-        </button>
-        <button
-          type="button"
-          @click="handleDelete"
-          class="w-full bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300"
-        >
-          Delete
-        </button>
       </form>
     </div>
 
-    <div v-else class="text-center text-gray-500">
-      <p>Loading...</p>
+    <div class="flex items-center gap-4 mt-4">
+      <button
+        type="button"
+        @click="handleDelete"
+        class="w-full bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300"
+      >
+        Delete
+      </button>
+
+      <button
+        type="submit"
+        @click="handleFormSubmit"
+        class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+      >
+        Save
+      </button>
     </div>
   </div>
 </template>
@@ -128,16 +133,22 @@ import { useIconsStore } from '../composables/iconsStore'
 import * as OutlineIcons from '@heroicons/vue/24/outline'
 import FieldLabel from '../components/fields/FieldLabel.vue'
 import BackButton from '../components/ui/BackButton.vue'
+import { useCategoryStore } from '../composables/categoryStorage'
 
 const route = useRoute()
 const router = useRouter()
 const store = useStorageStore()
+const categoryStore = useCategoryStore()
 
 const iconsStore = useIconsStore()
 const iconOptions = iconsStore.iconOptions
+const allCategories = computed(() => categoryStore.categories)
 
 const nodeId = route.query.id
 const node = ref<Node | null>(null)
+
+const isItem = computed(() => node.value && 'quantity' in node.value)
+const isStorage = computed(() => node.value && 'children' in node.value)
 
 let previousName: string | undefined = undefined
 
@@ -150,9 +161,16 @@ onMounted(() => {
     }
     previousName = node.value?.name
   }
-})
 
-const isItem = computed(() => node.value && 'quantity' in node.value)
+  if(node.value){
+    console.log(node.value.categoryId)
+    if (!node.value.categoryId) {
+      node.value.categoryId = '1'
+    }
+  }
+
+  categoryStore.loadCategoriesData()
+})
 
 const handleFormSubmit = () => {
   if (node.value) {
@@ -170,13 +188,11 @@ const handleDelete = () => {
   }
 }
 
-const isNameModified = computed(() => node.value?.name !== previousName)
+const isNameModified = computed(() => {
+  return node.value?.name !== previousName
+})
 
 const getIconComponent = (iconName: string) => {
   return OutlineIcons[iconName as keyof typeof OutlineIcons]
 }
 </script>
-
-
-
-

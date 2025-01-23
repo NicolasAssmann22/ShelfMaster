@@ -1,6 +1,6 @@
 <template>
   <BackButton />
-  <div class="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
+  <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
     <!-- Radio buttons for item or storage selection -->
     <div class="mb-6 flex items-center space-x-6">
       <label class="flex items-center space-x-2">
@@ -48,7 +48,7 @@
           id="name"
           v-model="item.name"
           ref="itemNameInput"
-          :class="{ 'required': !item.name }"
+          :class="{ required: !item.name }"
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter item name"
         />
@@ -62,9 +62,10 @@
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Select a category</option>
-          <option value="electronics">Electronics</option>
-          <option value="furniture">Furniture</option>
-          <option value="clothing">Clothing</option>
+          <!-- Dynamically populate categories from categoryStore -->
+          <option v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </option>
         </select>
       </div>
 
@@ -121,7 +122,7 @@
           id="name"
           v-model="storage.name"
           ref="storageNameInput"
-          :class="{ 'required': !storage.name }"
+          :class="{ required: !storage.name }"
           class="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500"
           placeholder="Enter storage name"
         />
@@ -176,8 +177,16 @@ import * as OutlineIcons from '@heroicons/vue/24/outline'
 import { useRoute, useRouter } from 'vue-router'
 import { useStorageStore } from '../composables/useStorage'
 import { useIconsStore } from '../composables/iconsStore'
-import { createItem, createStorage, type Item, type Storage, ItemStatus } from '../types/models'
-import { onMounted, computed, ref } from 'vue'
+import { useCategoryStore } from '../composables/categoryStorage'
+import {
+  createItem,
+  createStorage,
+  type Item,
+  type Storage,
+  ItemStatus,
+  type Category,
+} from '../types/models'
+import { onMounted, computed, ref, nextTick } from 'vue'
 import FieldLabel from '../components/fields/FieldLabel.vue'
 import BackButton from '../components/ui/BackButton.vue'
 
@@ -212,6 +221,10 @@ const path = computed(() => {
 const iconsStore = useIconsStore()
 const iconOptions = iconsStore.iconOptions
 
+const categoryStore = useCategoryStore()
+
+const categories = computed(() => categoryStore.categories)
+
 // Function to dynamically get the selected icon component
 const getIconComponent = (iconName: string) => {
   return OutlineIcons[iconName as keyof typeof OutlineIcons]
@@ -229,7 +242,9 @@ const setFocus = () => {
   }
 }
 
-onMounted(setFocus)
+onMounted(() => {
+  setFocus()
+})
 
 // Handle the "Add" button click
 const handleAdd = () => {
