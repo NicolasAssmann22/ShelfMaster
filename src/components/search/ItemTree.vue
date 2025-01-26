@@ -52,6 +52,7 @@ watch(
 )
 
 const handleSearch = (searchText: string) => {
+  resetHighlighting()
   const nameResults: SearchResult[] = searchNodesByName(searchText, treeData.value)
   const categoryResults: SearchResult[] = searchItemsByCategoryName(searchText, treeData.value, categoryStore.categories)
 
