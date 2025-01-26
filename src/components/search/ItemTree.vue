@@ -52,8 +52,8 @@ watch(
 )
 
 const handleSearch = (searchText: string) => {
-  const nameResults: SearchResult[] = searchNodesByName(searchText, storageStore.storage)
-  const categoryResults: SearchResult[] = searchItemsByCategoryName(searchText, storageStore.storage, categoryStore.categories)
+  const nameResults: SearchResult[] = searchNodesByName(searchText, treeData.value)
+  const categoryResults: SearchResult[] = searchItemsByCategoryName(searchText, treeData.value, categoryStore.categories)
 
   if (nameResults.length === 0 && categoryResults.length === 0) {
     return

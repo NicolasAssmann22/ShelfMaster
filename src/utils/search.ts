@@ -22,7 +22,7 @@ const searchRecursively = (nodes: Node[], matchCallback: (node: Node) => boolean
       if (matchCallback(node)) {
         result.push({ node, path: newPath });
       }
-      if ('items' in node && 'children' in node) {
+      if (isStorage(node)) {
         const storageNode: Storage = node as Storage;
         search(storageNode.items, newPath);
         search(storageNode.children, newPath);
@@ -79,7 +79,7 @@ const createTreeFromSearchResults = (results: SearchResult[]): Storage[] => {
  * @returns An array of matching nodes.
  */
 export const searchNodesByName = (searchText: string, storages: Storage[]): SearchResult[] => {
-  return searchRecursively(storages, (node) => searchText.length > 0 && node.name.includes(searchText));
+  return searchRecursively(storages, (node) => searchText.length > 0 && node.name.toLowerCase().includes(searchText.toLowerCase()));
 };
 
 /**
