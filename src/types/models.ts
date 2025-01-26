@@ -1,4 +1,4 @@
-import CryptoJS from 'crypto-js'
+import crypto from 'crypto-js';
 
 // Default icons for storage and items
 const STORAGE_DEFAULT_ICON = 'FolderIcon'
@@ -57,18 +57,6 @@ export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
   }
 }
 
-// Function to generate a unique ID based on name and timestamp
-function generateId(name: string): string {
-  if (IS_DEBUG) {
-    return name;
-  }
-  console.log("generate id for: " + name);
-  const timestamp = Date.now().toString() // Current timestamp
-  return CryptoJS.SHA256(name + timestamp)
-    .toString(CryptoJS.enc.Hex)
-    .toString(0, 8) // Hash the name with timestamp
-}
-
 // Function to create a new storage with validation and defaults
 export function createStorage(data: Partial<Storage> & Pick<Storage, 'name'>): Storage {
   if (!data.name) {
@@ -97,6 +85,18 @@ export function createCategory(data: Partial<Category> & Pick<Category, 'name'>)
     name: data.name, // Mandatory field
     description: data.description + '', // Optional description field
   }
+}
+
+// Function to generate a unique ID based on name and timestamp
+function generateId(name: string): string {
+  if (IS_DEBUG) {
+    return name;
+  }
+  console.log("generate id for: " + name);
+  const timestamp = Date.now().toString() // Current timestamp
+  return crypto.sha256(name + timestamp)
+    .toString(crypto.enc.Hex)
+    .substring(0, 8) // Hash the name with timestamp
 }
 
 // Function to retrieve the default icon for a given node
