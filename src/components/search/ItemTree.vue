@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type TreeComponent from '../ui/TreeComponent.vue'
 import Tree from '../ui/TreeComponent.vue'
 import type { Node } from '../../types/models'
 import { findTreeNodeById, mapStoragesToTreeNodes } from '../../utils/treeMapper'
 import { useStorageStore } from '../../composables/useStorage'
-import { filterTreeByCategory, searchNodesByName, searchItemsByCategory, type SearchResult } from '../../utils/search'
+import { filterTreeByCategory, searchNodesByName, searchItemsByCategoryName, type SearchResult } from '../../utils/search'
 import type { TreeNodeData } from '../../types/tree'
 import { useCategoryStore } from '../../composables/categoryStorage'
 
@@ -13,13 +13,8 @@ import { useCategoryStore } from '../../composables/categoryStorage'
  * This component handles domain-specific logic such as mapping from the model to the tree component and filtering the tree based on search results.
  */
 
-const categoryStore = useCategoryStore()
 const storageStore = useStorageStore()
-
-onMounted(() => {
-  storageStore.loadStorageData()
-  categoryStore.loadCategoriesData()
-})
+const categoryStore = useCategoryStore()
 
 const props = defineProps({
   searchText: {
@@ -58,7 +53,7 @@ watch(
 
 const handleSearch = (searchText: string) => {
   const nameResults: SearchResult[] = searchNodesByName(searchText, storageStore.storage)
-  const categoryResults: SearchResult[] = searchItemsByCategory(searchText, storageStore.storage)
+  const categoryResults: SearchResult[] = searchItemsByCategoryName(searchText, storageStore.storage, categoryStore.categories)
 
   if (nameResults.length === 0 && categoryResults.length === 0) {
     return

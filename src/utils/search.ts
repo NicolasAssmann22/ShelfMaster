@@ -1,4 +1,5 @@
-import type { Node, Storage, Item } from '../types/models';
+import type { Node, Storage, Item, Category } from '../types/models'
+import { isStorage, isItem } from '../types/models'
 
 export interface SearchResult {
   node: Node;
@@ -33,6 +34,44 @@ const searchRecursively = (nodes: Node[], matchCallback: (node: Node) => boolean
   return result;
 };
 
+
+const createTreeFromSearchResults = (results: SearchResult[]): Storage[] => {
+  const tree: Storage[] = [];
+
+  results.forEach((result) => {
+    const path = result.path;
+    let currentStorage: Storage | undefined = undefined;
+
+    path.forEach((node) => {
+      if (isStorage(node)) {
+        const storage = node as Storage;
+        if (!currentStorage) {
+          let existingStorage = tree.find((n) => n.id === storage.id);
+          if (!existingStorage) {
+            existingStorage = { ...storage, children: [], items: [] };
+            tree.push(existingStorage);
+          }
+          currentStorage = existingStorage;
+        } else {
+          let nextStorage = currentStorage.children.find((n) => n.id === storage.id);
+          if (!nextStorage) {
+            nextStorage = { ...storage, children: [], items: [] };
+            currentStorage.children.push(nextStorage);
+          }
+          currentStorage = nextStorage;
+        }
+      } else {
+        const item = node as Item;
+        if (currentStorage) {
+          currentStorage.items.push(item);
+        }
+      }
+    });
+  });
+
+  return tree;
+}
+
 /**
  * Search for nodes in the storage tree that match the given search text.
  * @param searchText The text to search for.
@@ -45,22 +84,39 @@ export const searchNodesByName = (searchText: string, storages: Storage[]): Sear
 
 /**
  * Search for items in the storage tree that match the given category.
- * @param categoryId The category to search for.
+ * @param categoryName The category to search for.
  * @param storages The storage tree to search in.
+ * @param categories The list of categories to match against.
  * @returns An array of matching items.
  */
-export const searchItemsByCategory = (categoryId: string, storages: Storage[]): SearchResult[] => {
-  return searchRecursively(storages, (node) => 'categoryId' in node && node.categoryId === categoryId);
+export const searchItemsByCategoryName = (categoryName: string, storages: Storage[], categories: Category[]): SearchResult[] => {
+  const matchingCategories = categories.filter((c) => c.name.toLowerCase().includes(categoryName.toLowerCase()));
+  return searchRecursively(storages, (node) => {
+    if (isItem(node)) {
+      const item = node as Item;
+      return matchingCategories.some((c) => c.id === item.categoryId);
+    }
+    return false;
+  });
 };
 
-export const filterTreeByCategory = (categoryId: string, storages: Storage[]): Storage[] => {
-  const filterRecursively = (storage: Storage): boolean => {
-    const items = searchItemsByCategory(categoryId, [storage]);
-    if (items.length > 0) {
-      return true;
+export const searchItemsByCategoryId = (categoryId: string, storages: Storage[]): SearchResult[] => {
+  return searchRecursively(storages, (node) => {
+    if (isItem(node)) {
+      const item = node as Item;
+      return item.categoryId === categoryId;
     }
-    return storage.children.some(filterRecursively);
-  };
+    return false;
+  });
+}
 
-  return storages.filter(filterRecursively);
+/**
+ * Filter the storage tree the given category id.
+ * @param categoryId The category to filter by.
+ * @param storages The storage tree to filter.
+ * @returns A new storage tree containing only the matching nodes.
+ */
+export const filterTreeByCategory = (categoryId: string, storages: Storage[]): Storage[] => {
+  const results = searchItemsByCategoryId(categoryId, storages);
+  return createTreeFromSearchResults(results);
 };

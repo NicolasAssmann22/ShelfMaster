@@ -159,8 +159,6 @@ onMounted(() => {
     }
     previousName = node.value?.name
   }
-
-  categoryStore.loadCategoriesData()
 })
 
 const handleFormSubmit = () => {

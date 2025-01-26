@@ -24,8 +24,6 @@ onMounted(() => {
     }
     previousName = category.value?.name
   }
-
-  categoryStore.loadCategoriesData()
 })
 
 const handleFormSubmit = () => {

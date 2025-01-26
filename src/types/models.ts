@@ -3,6 +3,7 @@ import CryptoJS from 'crypto-js'
 // Default icons for storage and items
 const STORAGE_DEFAULT_ICON = 'FolderIcon'
 const ITEM_DEFAULT_ICON = 'WrenchIcon'
+const IS_DEBUG = false;
 
 // Interface for categories
 export interface Category {
@@ -58,6 +59,10 @@ export function createItem(data: Partial<Item> & Pick<Item, 'name'>): Item {
 
 // Function to generate a unique ID based on name and timestamp
 function generateId(name: string): string {
+  if (IS_DEBUG) {
+    return name;
+  }
+  console.log("generate id for: " + name);
   const timestamp = Date.now().toString() // Current timestamp
   return CryptoJS.SHA256(name + timestamp)
     .toString(CryptoJS.enc.Hex)
@@ -96,10 +101,18 @@ export function createCategory(data: Partial<Category> & Pick<Category, 'name'>)
 
 // Function to retrieve the default icon for a given node
 export function getDefaultIcon(node: Node): string {
-  if ('items' in node) {
+  if (isStorage(node)) {
     return STORAGE_DEFAULT_ICON // Return storage default icon for storage nodes
-  } else if ('quantity' in node) {
+  } else if (isItem(node)) {
     return ITEM_DEFAULT_ICON // Return item default icon for item nodes
   }
   throw Error('Unknown node type') // Error if the node type is unrecognized
+}
+
+export function isStorage(node: Node): node is Storage {
+  return 'items' in node
+}
+
+export function isItem(node: Node): node is Item {
+  return 'quantity' in node
 }
