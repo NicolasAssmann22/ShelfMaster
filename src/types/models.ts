@@ -1,5 +1,3 @@
-import crypto from 'crypto-js';
-
 // Default icons for storage and items
 const STORAGE_DEFAULT_ICON = 'FolderIcon'
 const ITEM_DEFAULT_ICON = 'WrenchIcon'
@@ -92,11 +90,10 @@ function generateId(name: string): string {
   if (IS_DEBUG) {
     return name;
   }
-  console.log("generate id for: " + name);
   const timestamp = Date.now().toString() // Current timestamp
-  return crypto.sha256(name + timestamp)
-    .toString(crypto.enc.Hex)
-    .substring(0, 8) // Hash the name with timestamp
+  const randomValues = window.crypto.getRandomValues(new Uint8Array(8))
+  const randomHex = Array.from(randomValues).map((v) => v.toString(16).padStart(2, '0')).join('')
+  return `${name}-${timestamp}-${randomHex.substring(0, 8)}`
 }
 
 // Function to retrieve the default icon for a given node
