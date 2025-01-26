@@ -3,23 +3,23 @@
     {
       "name": "Kitchen",
       "items": [
-        { "name": "Knife", "category": "1", "quantity": 2, "status": "available" },
-        { "name": "Fork", "category": "1", "quantity": 4, "status": "lent" }
+        { "name": "Knife", "categoryId": "1", "quantity": 2, "status": "available" },
+        { "name": "Fork", "categoryId": "1", "quantity": 4, "status": "lent" }
       ],
       "children": [
         {
           "name": "Cupboard",
           "items": [
-            { "name": "Plate", "category": "2", "quantity": 6, "status": "available" },
-            { "name": "Bowl", "category": "2", "quantity": 3, "status": "available" }
+            { "name": "Plate", "categoryId": "2", "quantity": 6, "status": "available" },
+            { "name": "Bowl", "categoryId": "2", "quantity": 3, "status": "available" }
           ],
           "children": []
         },
         {
           "name": "Drawer",
           "items": [
-            { "name": "Spoon", "category": "1", "quantity": 3, "status": "available" },
-            { "name": "Teaspoon", "category": "1", "quantity": 5, "status": "lent" }
+            { "name": "Spoon", "categoryId": "1", "quantity": 3, "status": "available" },
+            { "name": "Teaspoon", "categoryId": "1", "quantity": 5, "status": "lent" }
           ],
           "children": []
         }
@@ -28,15 +28,15 @@
     {
       "name": "Bathroom",
       "items": [
-        { "name": "Toothbrush", "category": "3", "quantity": 2, "status": "available" },
-        { "name": "Toothpaste", "category": "3", "quantity": 1, "status": "available" }
+        { "name": "Toothbrush", "categoryId": "3", "quantity": 2, "status": "available" },
+        { "name": "Toothpaste", "categoryId": "3", "quantity": 1, "status": "available" }
       ],
       "children": [
         {
           "name": "Cabinet",
           "items": [
-            { "name": "Towel", "category": "4", "quantity": 4, "status": "available" },
-            { "name": "Soap", "category": "3", "quantity": 2, "status": "lent" }
+            { "name": "Towel", "categoryId": "4", "quantity": 4, "status": "available" },
+            { "name": "Soap", "categoryId": "3", "quantity": 2, "status": "lent" }
           ],
           "children": []
         }
@@ -85,8 +85,8 @@
                                             {
                                               "name": "Level 10",
                                               "items": [
-                                                { "name": "Item 1", "category": "5", "quantity": 1, "status": "available" },
-                                                { "name": "Item 2", "category": "6", "quantity": 2, "status": "lent" }
+                                                { "name": "Item 1", "categoryId": "5", "quantity": 1, "status": "available" },
+                                                { "name": "Item 2", "categoryId": "6", "quantity": 2, "status": "lent" }
                                               ],
                                               "children": []
                                             }

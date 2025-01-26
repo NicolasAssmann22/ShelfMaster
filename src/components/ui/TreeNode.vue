@@ -113,7 +113,7 @@ const leave = (el: Element): void => {
       @leave="leave">
       <ul
         v-if="node.expanded && node.children"
-        class="pl-4 space-y-1 "
+        class="pl-4"
       >
         <TreeNode
           v-for="child in node.children"

@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import SearchBar from '../components/search/SearchBar.vue'
 import ItemTree from '../components/search/ItemTree.vue'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { PlusIcon, PencilIcon } from '@heroicons/vue/24/outline'
 import { useCategoryStore } from '../composables/categoryStorage'
 
 const categoryStore = useCategoryStore()
 
-onMounted(() => {
-  categoryStore.loadCategoriesData()
-  console.log('Categories updated:', categoryStore.categories)
-})
-
 const categories = computed(() => categoryStore.categories)
+console.log(categories)
+const searchText = ref('')
+const selectedCategory = ref('')
+const router = useRouter()
 
 watch(
   () => categoryStore.categories,
@@ -23,10 +22,6 @@ watch(
     }
   },
 )
-
-const searchText = ref('')
-const selectedCategory = ref('')
-const router = useRouter()
 
 const handleSearch = (text: string) => {
   searchText.value = text
@@ -41,6 +36,7 @@ const navigateToEditCategory = () => {
     router.push({ name: 'edit-category', query: { id: selectedCategory.value} })
   }
 }
+
 </script>
 
 <template>
@@ -70,7 +66,7 @@ const navigateToEditCategory = () => {
         <PencilIcon class="w-5 h-5 text-gray-500" />
       </span>
     </div>
-    <ItemTree :searchText="searchText" :selectedCategory="selectedCategory" />
+    <ItemTree :searchText="searchText" :categoryId="selectedCategory" />
   </div>
 </template>
 
