@@ -11,7 +11,6 @@ import { useCategoryStore } from '../composables/categoryStorage'
 const categoryStore = useCategoryStore()
 
 const categories = computed(() => categoryStore.categories)
-console.log(categories)
 const searchText = ref('')
 const selectedCategory = ref('')
 const dnd = ref(false)
