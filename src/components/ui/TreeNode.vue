@@ -98,6 +98,8 @@ const leave = (el: Element): void => {
   >
     <TreeNodeField
       :node="node"
+      :showAddField="!dnd"
+      :showEditField="!dnd"
       :draggable="dnd"
       class="hover:bg-gray-100 rounded"
       @dragstart.stop="onDragStart($event, node)"
