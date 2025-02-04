@@ -15,6 +15,14 @@ const props = defineProps({
     type: Object as PropType<TreeNodeData>,
     required: true,
   },
+  showAddField: {
+    type: Boolean,
+    default: true,
+  },
+  showEditField: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const emit = defineEmits<{
@@ -58,8 +66,9 @@ const isStorageNode = computed(() => {
     </div>
 
     <!-- Align AddField to the right -->
-    <AddField v-if="isStorageNode" :node="node" />
-    <EditField :node="node" />
+
+    <AddField v-if="showAddField && isStorageNode" :node="node" />
+    <EditField v-if="showEditField" :node="node" />
   </div>
 </template>
 

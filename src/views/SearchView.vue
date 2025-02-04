@@ -3,15 +3,17 @@ import SearchBar from '../components/search/SearchBar.vue'
 import ItemTree from '../components/search/ItemTree.vue'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { PlusIcon, PencilIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, PencilIcon, HandRaisedIcon as HandRaisedOutlineIcon } from '@heroicons/vue/24/outline'
+import { HandRaisedIcon as HandRaisedSolidIcon } from '@heroicons/vue/24/solid'
+
 import { useCategoryStore } from '../composables/categoryStorage'
 
 const categoryStore = useCategoryStore()
 
 const categories = computed(() => categoryStore.categories)
-console.log(categories)
 const searchText = ref('')
 const selectedCategory = ref('')
+const dnd = ref(false)
 const router = useRouter()
 
 watch(
@@ -22,6 +24,10 @@ watch(
     }
   },
 )
+
+const toggleDnd = () => {
+  dnd.value = !dnd.value
+}
 
 const handleSearch = (text: string) => {
   searchText.value = text
@@ -43,6 +49,13 @@ const navigateToEditCategory = () => {
   <div class="search-view">
     <SearchBar @search="handleSearch" />
     <div class="category-dropdown flex items-center gap-2">
+      <button @click="toggleDnd" class="p-1 rounded cursor-pointer hover:bg-gray-200 hover:text-gray-700">
+        <component
+          :is="dnd ? HandRaisedSolidIcon : HandRaisedOutlineIcon"
+          class="w-5 h-5 text-gray-500"
+        />
+      </button>
+
       <select v-model="selectedCategory" class="category-dropdown-select">
         <option value="">All Categories</option>
         <option v-for="category in categories" :key="category.id" :value="category.id">
@@ -66,7 +79,7 @@ const navigateToEditCategory = () => {
         <PencilIcon class="w-5 h-5 text-gray-500" />
       </span>
     </div>
-    <ItemTree :searchText="searchText" :categoryId="selectedCategory" />
+    <ItemTree :searchText="searchText" :categoryId="selectedCategory" :dnd="dnd" />
   </div>
 </template>
 
